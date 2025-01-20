@@ -72,6 +72,7 @@ namespace MERC
             catch (Exception ex)
             {
                 MessageBox.Show($"Error displaying image: {ex.Message}");
+                //this is a test
             }
         }
 

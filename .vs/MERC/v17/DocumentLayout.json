@@ -3,11 +3,11 @@
   "WorkspaceRootPath": "C:\\Users\\MSI\\source\\repos\\MERC\\",
   "Documents": [
     {
-      "AbsoluteMoniker": "D:0:0:{15991942-EDB0-46D9-A781-EB7F9FE55A1B}|MERC\\MERC.csproj|C:\\Users\\MSI\\source\\repos\\MERC\\merc\\booking1.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}|Form",
+      "AbsoluteMoniker": "D:0:0:{15991942-EDB0-46D9-A781-EB7F9FE55A1B}|MERC\\MERC.csproj|c:\\users\\msi\\source\\repos\\merc\\merc\\booking1.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}|Form",
       "RelativeMoniker": "D:0:0:{15991942-EDB0-46D9-A781-EB7F9FE55A1B}|MERC\\MERC.csproj|solutionrelative:merc\\booking1.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}|Form"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{15991942-EDB0-46D9-A781-EB7F9FE55A1B}|MERC\\MERC.csproj|c:\\users\\msi\\source\\repos\\merc\\merc\\landingpage.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}|Form",
+      "AbsoluteMoniker": "D:0:0:{15991942-EDB0-46D9-A781-EB7F9FE55A1B}|MERC\\MERC.csproj|C:\\Users\\MSI\\source\\repos\\MERC\\merc\\landingpage.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}|Form",
       "RelativeMoniker": "D:0:0:{15991942-EDB0-46D9-A781-EB7F9FE55A1B}|MERC\\MERC.csproj|solutionrelative:merc\\landingpage.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}|Form"
     },
     {
@@ -53,8 +53,7 @@
               "ToolTip": "C:\\Users\\MSI\\source\\repos\\MERC\\MERC\\LandingPage.cs [Design]",
               "RelativeToolTip": "MERC\\LandingPage.cs [Design]",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-01-19T08:03:34.433Z",
-              "EditorCaption": " [Design]"
+              "WhenOpened": "2025-01-19T08:03:34.433Z"
             },
             {
               "$type": "Document",
