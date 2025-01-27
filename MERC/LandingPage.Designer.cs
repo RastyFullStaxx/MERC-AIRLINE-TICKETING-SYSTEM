@@ -135,7 +135,7 @@
         private void btnBook_Click(object sender, EventArgs e)
         {
             // Navigate to the Booking Wizard Panel
-            Booking1 Booking1 = new Booking1();
+            Homepage Booking1 = new Homepage();
             Booking1.Show();
             this.Hide();
 

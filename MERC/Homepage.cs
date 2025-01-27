@@ -8,92 +8,209 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
+
+// panel 1 = (Booking Process) gets user input
+// panel 2 = (Booking COnfirmation) displays the users inputs for confirmation
+// panel 3 = (Booking Guidlines) contains guidelines
+// panel 4 = (About Us)
+// panel 5 = (View Flight Schedule)
+// panel 6 = (Homepage)
+
+
+
 namespace MERC
 {
     public partial class Homepage : Form
     {
-        private int currentImageIndex = 0;
-        private string[] imagePaths;
-
         public Homepage()
         {
             InitializeComponent();
+
         }
 
-        private void Homepage_Load(object sender, EventArgs e)
+        private void btnConfirmBooking_Click(object sender, EventArgs e)
         {
-            // Get all image files from the specified folder
-            string folderPath = @"C:\Users\MSI\source\repos\MERC\MERC\assets\";
-
-            try
-            {
-                // Load all image files from the folder
-                imagePaths = Directory.GetFiles(folderPath, "*.jpg")
-                    .Concat(Directory.GetFiles(folderPath, "*.png"))
-                    .Concat(Directory.GetFiles(folderPath, "*.bmp"))
-                    .ToArray();
-
-                // Check if images were found
-                if (imagePaths.Length == 0)
-                {
-                    MessageBox.Show("No images found in the specified folder.");
-                    return;
-                }
-
-                // Display the first image
-                imgbSlideshow.Image = Image.FromFile(imagePaths[currentImageIndex]);
-
-                // Start the Timer
-                timer1.Interval = 3000; // 3 seconds
-                timer1.Start();
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show($"Error loading images: {ex.Message}");
-            }
+            panel1.Visible = false; // Hide panel1
+            panel2.Visible = true;  // Show panel2
+            imgPanelNameHeader.Visible = true;
         }
 
-        private void imgbSlideshow_Click(object sender, EventArgs e)
+        private void Booking1_Load(object sender, EventArgs e)
         {
 
         }
-        private void timer1_Tick(object sender, EventArgs e)
+
+        private void label5_Click(object sender, EventArgs e)
         {
-            if (imagePaths == null || imagePaths.Length == 0) return;
 
-            // Move to the next image
-            currentImageIndex = (currentImageIndex + 1) % imagePaths.Length;
-
-            try
-            {
-                // Display the next image
-                imgbSlideshow.Image = Image.FromFile(imagePaths[currentImageIndex]);
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show($"Error displaying image: {ex.Message}");
-                //this is a test
-            }
         }
 
         private void btnBook_Click(object sender, EventArgs e)
         {
-            Booking1 booking1 = new Booking1();
-            booking1.Show();
+            panel2.Visible = false;  // Show panel2
+            panel3.Visible = false;
+            panel1.Visible = true;
+
+        }
+
+        private void button2_Click(object sender, EventArgs e)
+        {
+            // implement clearance of user inputs upon click
+
+            Homepage homepage = new Homepage();
+            homepage.Show();
             this.Hide();
         }
 
-        private void navbtnBbook_Click(object sender, EventArgs e)
+        private void lblConfirm_ConfirmBooking_Click(object sender, EventArgs e)
         {
-            // Navigate to the Booking Wizard Panel
-            Booking1 Booking1 = new Booking1();
-            Booking1.Show();
+            Ticket ticket = new Ticket();
+            ticket.Show();
+            this.Hide();
+        }
+
+        private void btnEditBooking_Click_1(object sender, EventArgs e)
+        {
+            panel2.Visible = false;
+            panel1.Visible = true;
+        }
+
+        private void button1_Click(object sender, EventArgs e)
+        {
+            // implement clearance of user inputs upon click
+
+            Homepage homepage = new Homepage();
+            homepage.Show();
             this.Hide();
         }
 
         private void navbtnHomepage_Click(object sender, EventArgs e)
         {
+            panel1.Visible = false;
+            panel2.Visible = false;
+            panel3.Visible = false;
+            panel4.Visible = false;
+            panel5.Visible = false;
+            panel6.Visible = true;
 
+            navbtnBbook.Image = Image.FromFile("C:\\Users\\MSI\\source\\repos\\MERC\\MERC\\assets\\navbtnBook_Inactive.png");
+            navbtnAboutUs.Image = Image.FromFile("C:\\Users\\MSI\\source\\repos\\MERC\\MERC\\assets\\navbtnAboutUs_Inactive.png");
+            navbtnHomepage.Image = Image.FromFile("C:\\Users\\MSI\\source\\repos\\MERC\\MERC\\assets\\navbtnHomepage_Active.png");
+            navbtnFlighSchedule.Image = Image.FromFile("C:\\Users\\MSI\\source\\repos\\MERC\\MERC\\assets\\navbtnFlightSchedule_Inactive.png");
+            navbtnTransactions.Image = Image.FromFile("C:\\Users\\MSI\\source\\repos\\MERC\\MERC\\assets\\navbtnTransactions_Inactive.png");
+            navbtnAboutUs.Image = Image.FromFile("C:\\Users\\MSI\\source\\repos\\MERC\\MERC\\assets\\navbtnAboutUs_Inactive.png");
+            navbtnViewBooking.Image = Image.FromFile("C:\\Users\\MSI\\source\\repos\\MERC\\MERC\\assets\\navbtnViewBooking_Inactive.png");
+        }
+
+        private void navbtnAboutUs_Click(object sender, EventArgs e)
+        {
+            panel1.Visible = false;
+            panel2.Visible = false;
+            panel3.Visible = false;
+            panel4.Visible = true;
+            panel5.Visible = false;
+            panel6.Visible = false;
+
+            navbtnBbook.Image = Image.FromFile("C:\\Users\\MSI\\source\\repos\\MERC\\MERC\\assets\\navbtnBook_Inactive.png");
+            navbtnAboutUs.Image = Image.FromFile("C:\\Users\\MSI\\source\\repos\\MERC\\MERC\\assets\\navbtnAboutUs_Inactive.png");
+            navbtnHomepage.Image = Image.FromFile("C:\\Users\\MSI\\source\\repos\\MERC\\MERC\\assets\\navbtnHomepage_Inactive.png");
+            navbtnFlighSchedule.Image = Image.FromFile("C:\\Users\\MSI\\source\\repos\\MERC\\MERC\\assets\\navbtnFlightSchedule_Inactive.png");
+            navbtnTransactions.Image = Image.FromFile("C:\\Users\\MSI\\source\\repos\\MERC\\MERC\\assets\\navbtnTransactions_Inactive.png");
+            navbtnAboutUs.Image = Image.FromFile("C:\\Users\\MSI\\source\\repos\\MERC\\MERC\\assets\\navbtnAboutUs_Active.png");
+            navbtnViewBooking.Image = Image.FromFile("C:\\Users\\MSI\\source\\repos\\MERC\\MERC\\assets\\navbtnViewBooking_Inactive.png");
+
+        }
+
+        private void navbtnBbook_Click(object sender, EventArgs e)
+        {
+            panel1.Visible = false;
+            panel2.Visible = false;
+            panel3.Visible = true;
+            panel4.Visible = false;
+            panel5.Visible = false;
+            panel6.Visible = false;
+
+            navbtnBbook.Image = Image.FromFile("C:\\Users\\MSI\\source\\repos\\MERC\\MERC\\assets\\navbtnBook_Active.png");
+            navbtnAboutUs.Image = Image.FromFile("C:\\Users\\MSI\\source\\repos\\MERC\\MERC\\assets\\navbtnAboutUs_Inactive.png");
+            navbtnHomepage.Image = Image.FromFile("C:\\Users\\MSI\\source\\repos\\MERC\\MERC\\assets\\navbtnHomepage_Inactive.png");
+            navbtnFlighSchedule.Image = Image.FromFile("C:\\Users\\MSI\\source\\repos\\MERC\\MERC\\assets\\navbtnFlightSchedule_Inactive.png");
+            navbtnTransactions.Image = Image.FromFile("C:\\Users\\MSI\\source\\repos\\MERC\\MERC\\assets\\navbtnTransactions_Inactive.png");
+            navbtnAboutUs.Image = Image.FromFile("C:\\Users\\MSI\\source\\repos\\MERC\\MERC\\assets\\navbtnAboutUs_Inactive.png");
+            navbtnViewBooking.Image = Image.FromFile("C:\\Users\\MSI\\source\\repos\\MERC\\MERC\\assets\\navbtnViewBooking_Inactive.png");
+        }
+
+        private void navbtnFlighSchedule_Click(object sender, EventArgs e)
+        {
+            panel1.Visible = false;
+            panel2.Visible = false;
+            panel3.Visible = false;
+            panel4.Visible = false;
+            panel5.Visible = true;
+            panel6.Visible = false;
+
+            navbtnBbook.Image = Image.FromFile("C:\\Users\\MSI\\source\\repos\\MERC\\MERC\\assets\\navbtnBook_Inactive.png");
+            navbtnAboutUs.Image = Image.FromFile("C:\\Users\\MSI\\source\\repos\\MERC\\MERC\\assets\\navbtnAboutUs_Inactive.png");
+            navbtnHomepage.Image = Image.FromFile("C:\\Users\\MSI\\source\\repos\\MERC\\MERC\\assets\\navbtnHomepage_Inactive.png");
+            navbtnFlighSchedule.Image = Image.FromFile("C:\\Users\\MSI\\source\\repos\\MERC\\MERC\\assets\\navbtnFlightSchedule_Active.png");
+            navbtnTransactions.Image = Image.FromFile("C:\\Users\\MSI\\source\\repos\\MERC\\MERC\\assets\\navbtnTransactions_Inactive.png");
+            navbtnAboutUs.Image = Image.FromFile("C:\\Users\\MSI\\source\\repos\\MERC\\MERC\\assets\\navbtnAboutUs_Inactive.png");
+            navbtnViewBooking.Image = Image.FromFile("C:\\Users\\MSI\\source\\repos\\MERC\\MERC\\assets\\navbtnViewBooking_Inactive.png");
+        }
+
+        private void navbtnViewBooking_Click(object sender, EventArgs e)
+        {
+
+            panel1.Visible = false;
+            panel2.Visible = false;
+            panel3.Visible = false;
+            panel4.Visible = false;
+            panel5.Visible = false;
+            panel6.Visible = false;
+
+            navbtnBbook.Image = Image.FromFile("C:\\Users\\MSI\\source\\repos\\MERC\\MERC\\assets\\navbtnBook_Inactive.png");
+            navbtnAboutUs.Image = Image.FromFile("C:\\Users\\MSI\\source\\repos\\MERC\\MERC\\assets\\navbtnAboutUs_Inactive.png");
+            navbtnHomepage.Image = Image.FromFile("C:\\Users\\MSI\\source\\repos\\MERC\\MERC\\assets\\navbtnHomepage_Inactive.png");
+            navbtnFlighSchedule.Image = Image.FromFile("C:\\Users\\MSI\\source\\repos\\MERC\\MERC\\assets\\navbtnFlightSchedule_Inactive.png");
+            navbtnTransactions.Image = Image.FromFile("C:\\Users\\MSI\\source\\repos\\MERC\\MERC\\assets\\navbtnTransactions_Inactive.png");
+            navbtnAboutUs.Image = Image.FromFile("C:\\Users\\MSI\\source\\repos\\MERC\\MERC\\assets\\navbtnAboutUs_Inactive.png");
+            navbtnViewBooking.Image = Image.FromFile("C:\\Users\\MSI\\source\\repos\\MERC\\MERC\\assets\\navbtnViewBooking_Active.png");
+        }
+
+        private void navbtnTransactions_Click(object sender, EventArgs e)
+        {
+
+            panel1.Visible = false;
+            panel2.Visible = false;
+            panel3.Visible = false;
+            panel4.Visible = false;
+            panel5.Visible = false;
+            panel6.Visible = false;
+
+            navbtnBbook.Image = Image.FromFile("C:\\Users\\MSI\\source\\repos\\MERC\\MERC\\assets\\navbtnBook_Inactive.png");
+            navbtnAboutUs.Image = Image.FromFile("C:\\Users\\MSI\\source\\repos\\MERC\\MERC\\assets\\navbtnAboutUs_Inactive.png");
+            navbtnHomepage.Image = Image.FromFile("C:\\Users\\MSI\\source\\repos\\MERC\\MERC\\assets\\navbtnHomepage_Inactive.png");
+            navbtnFlighSchedule.Image = Image.FromFile("C:\\Users\\MSI\\source\\repos\\MERC\\MERC\\assets\\navbtnFlightSchedule_Inactive.png");
+            navbtnTransactions.Image = Image.FromFile("C:\\Users\\MSI\\source\\repos\\MERC\\MERC\\assets\\navbtnTransactions_Active.png");
+            navbtnAboutUs.Image = Image.FromFile("C:\\Users\\MSI\\source\\repos\\MERC\\MERC\\assets\\navbtnAboutUs_Inactive.png");
+            navbtnViewBooking.Image = Image.FromFile("C:\\Users\\MSI\\source\\repos\\MERC\\MERC\\assets\\navbtnViewBooking_Inactive.png");
+        }
+
+        private void btnBook_HomePageHomePage_Click(object sender, EventArgs e)
+        {
+            panel1.Visible = false;
+            panel2.Visible = false;
+            panel3.Visible = true;
+            panel4.Visible = false;
+            panel5.Visible = false;
+            panel6.Visible = false;
+
+            navbtnBbook.Image = Image.FromFile("C:\\Users\\MSI\\source\\repos\\MERC\\MERC\\assets\\navbtnBook_Active.png");
+            navbtnAboutUs.Image = Image.FromFile("C:\\Users\\MSI\\source\\repos\\MERC\\MERC\\assets\\navbtnAboutUs_Inactive.png");
+            navbtnHomepage.Image = Image.FromFile("C:\\Users\\MSI\\source\\repos\\MERC\\MERC\\assets\\navbtnHomepage_Inactive.png");
+            navbtnFlighSchedule.Image = Image.FromFile("C:\\Users\\MSI\\source\\repos\\MERC\\MERC\\assets\\navbtnFlightSchedule_Inactive.png");
+            navbtnTransactions.Image = Image.FromFile("C:\\Users\\MSI\\source\\repos\\MERC\\MERC\\assets\\navbtnTransactions_Inactive.png");
+            navbtnAboutUs.Image = Image.FromFile("C:\\Users\\MSI\\source\\repos\\MERC\\MERC\\assets\\navbtnAboutUs_Inactive.png");
+            navbtnViewBooking.Image = Image.FromFile("C:\\Users\\MSI\\source\\repos\\MERC\\MERC\\assets\\navbtnViewBooking_Inactive.png");
         }
     }
 }

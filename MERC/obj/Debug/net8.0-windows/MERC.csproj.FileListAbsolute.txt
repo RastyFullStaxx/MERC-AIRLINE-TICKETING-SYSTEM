@@ -16,7 +16,6 @@ C:\Users\MSI\source\repos\MERC\MERC\obj\Debug\net8.0-windows\MERC.pdb
 C:\Users\MSI\source\repos\MERC\MERC\obj\Debug\net8.0-windows\MERC.genruntimeconfig.cache
 C:\Users\MSI\source\repos\MERC\MERC\obj\Debug\net8.0-windows\ref\MERC.dll
 C:\Users\MSI\source\repos\MERC\MERC\obj\Debug\net8.0-windows\MERC.Homepage.resources
-C:\Users\MSI\source\repos\MERC\MERC\obj\Debug\net8.0-windows\MERC.Booking1.resources
 C:\Users\MSI\source\repos\MERC\MERC\obj\Debug\net8.0-windows\MERC.sourcelink.json
 C:\Users\MSI\source\repos\MERC\MERC\obj\Debug\net8.0-windows\MERC.Ticket.resources
 C:\Users\MSI\source\repos\MERC\MERC\obj\Debug\net8.0-windows\MERC.Register_LogIn.resources
