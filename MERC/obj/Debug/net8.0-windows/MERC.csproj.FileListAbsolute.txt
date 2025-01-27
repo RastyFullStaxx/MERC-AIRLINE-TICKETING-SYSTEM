@@ -20,3 +20,4 @@ C:\Users\MSI\source\repos\MERC\MERC\obj\Debug\net8.0-windows\MERC.sourcelink.jso
 C:\Users\MSI\source\repos\MERC\MERC\obj\Debug\net8.0-windows\MERC.Ticket.resources
 C:\Users\MSI\source\repos\MERC\MERC\obj\Debug\net8.0-windows\MERC.Register_LogIn.resources
 C:\Users\MSI\source\repos\MERC\MERC\obj\Debug\net8.0-windows\MERC.BaseForm.resources
+C:\Users\MSI\source\repos\MERC\MERC\obj\Debug\net8.0-windows\MERC.ReportError.resources

@@ -15,6 +15,9 @@ using System.Windows.Forms;
 // panel 4 = (About Us)
 // panel 5 = (View Flight Schedule)
 // panel 6 = (Homepage)
+// panel 7 = (View Bookings)
+// panel 8 = (View Transactions)
+// panel9_DetailedFlightView = (View Flight Details)
 
 
 
@@ -92,6 +95,9 @@ namespace MERC
             panel4.Visible = false;
             panel5.Visible = false;
             panel6.Visible = true;
+            panel7.Visible = false;
+            panel8.Visible = false;
+            panel9_DetailedFlightView.Visible = false;
 
             navbtnBbook.Image = Image.FromFile("C:\\Users\\MSI\\source\\repos\\MERC\\MERC\\assets\\navbtnBook_Inactive.png");
             navbtnAboutUs.Image = Image.FromFile("C:\\Users\\MSI\\source\\repos\\MERC\\MERC\\assets\\navbtnAboutUs_Inactive.png");
@@ -110,6 +116,9 @@ namespace MERC
             panel4.Visible = true;
             panel5.Visible = false;
             panel6.Visible = false;
+            panel7.Visible = false;
+            panel8.Visible = false;
+            panel9_DetailedFlightView.Visible = false;
 
             navbtnBbook.Image = Image.FromFile("C:\\Users\\MSI\\source\\repos\\MERC\\MERC\\assets\\navbtnBook_Inactive.png");
             navbtnAboutUs.Image = Image.FromFile("C:\\Users\\MSI\\source\\repos\\MERC\\MERC\\assets\\navbtnAboutUs_Inactive.png");
@@ -129,6 +138,9 @@ namespace MERC
             panel4.Visible = false;
             panel5.Visible = false;
             panel6.Visible = false;
+            panel7.Visible = false;
+            panel8.Visible = false;
+            panel9_DetailedFlightView.Visible = false;
 
             navbtnBbook.Image = Image.FromFile("C:\\Users\\MSI\\source\\repos\\MERC\\MERC\\assets\\navbtnBook_Active.png");
             navbtnAboutUs.Image = Image.FromFile("C:\\Users\\MSI\\source\\repos\\MERC\\MERC\\assets\\navbtnAboutUs_Inactive.png");
@@ -147,6 +159,9 @@ namespace MERC
             panel4.Visible = false;
             panel5.Visible = true;
             panel6.Visible = false;
+            panel7.Visible = false;
+            panel8.Visible = false;
+            panel9_DetailedFlightView.Visible = false;
 
             navbtnBbook.Image = Image.FromFile("C:\\Users\\MSI\\source\\repos\\MERC\\MERC\\assets\\navbtnBook_Inactive.png");
             navbtnAboutUs.Image = Image.FromFile("C:\\Users\\MSI\\source\\repos\\MERC\\MERC\\assets\\navbtnAboutUs_Inactive.png");
@@ -166,6 +181,9 @@ namespace MERC
             panel4.Visible = false;
             panel5.Visible = false;
             panel6.Visible = false;
+            panel7.Visible = true;
+            panel8.Visible = false;
+            panel9_DetailedFlightView.Visible = false;
 
             navbtnBbook.Image = Image.FromFile("C:\\Users\\MSI\\source\\repos\\MERC\\MERC\\assets\\navbtnBook_Inactive.png");
             navbtnAboutUs.Image = Image.FromFile("C:\\Users\\MSI\\source\\repos\\MERC\\MERC\\assets\\navbtnAboutUs_Inactive.png");
@@ -185,6 +203,9 @@ namespace MERC
             panel4.Visible = false;
             panel5.Visible = false;
             panel6.Visible = false;
+            panel7.Visible = false;
+            panel8.Visible = true;
+            panel9_DetailedFlightView.Visible = false;
 
             navbtnBbook.Image = Image.FromFile("C:\\Users\\MSI\\source\\repos\\MERC\\MERC\\assets\\navbtnBook_Inactive.png");
             navbtnAboutUs.Image = Image.FromFile("C:\\Users\\MSI\\source\\repos\\MERC\\MERC\\assets\\navbtnAboutUs_Inactive.png");
@@ -203,6 +224,9 @@ namespace MERC
             panel4.Visible = false;
             panel5.Visible = false;
             panel6.Visible = false;
+            panel7.Visible = false;
+            panel8.Visible = false;
+            panel9_DetailedFlightView.Visible = false;
 
             navbtnBbook.Image = Image.FromFile("C:\\Users\\MSI\\source\\repos\\MERC\\MERC\\assets\\navbtnBook_Active.png");
             navbtnAboutUs.Image = Image.FromFile("C:\\Users\\MSI\\source\\repos\\MERC\\MERC\\assets\\navbtnAboutUs_Inactive.png");
@@ -211,6 +235,11 @@ namespace MERC
             navbtnTransactions.Image = Image.FromFile("C:\\Users\\MSI\\source\\repos\\MERC\\MERC\\assets\\navbtnTransactions_Inactive.png");
             navbtnAboutUs.Image = Image.FromFile("C:\\Users\\MSI\\source\\repos\\MERC\\MERC\\assets\\navbtnAboutUs_Inactive.png");
             navbtnViewBooking.Image = Image.FromFile("C:\\Users\\MSI\\source\\repos\\MERC\\MERC\\assets\\navbtnViewBooking_Inactive.png");
+        }
+
+        private void lblViewDetails_Return_Click(object sender, EventArgs e)
+        {
+            panel9_DetailedFlightView.Visible = false;
         }
     }
 }

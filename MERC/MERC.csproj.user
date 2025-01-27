@@ -13,6 +13,9 @@
     <Compile Update="Register_LogIn.cs">
       <SubType>Form</SubType>
     </Compile>
+    <Compile Update="ReportError.cs">
+      <SubType>Form</SubType>
+    </Compile>
     <Compile Update="Ticket.cs">
       <SubType>Form</SubType>
     </Compile>
