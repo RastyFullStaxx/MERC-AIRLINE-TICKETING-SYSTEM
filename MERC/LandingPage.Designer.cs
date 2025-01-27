@@ -134,8 +134,11 @@
 
         private void btnBook_Click(object sender, EventArgs e)
         {
-            // Add logic for button click here
-            
+            // Navigate to the Booking Wizard Panel
+            Booking1 Booking1 = new Booking1();
+            Booking1.Show();
+            this.Hide();
+
         }
 
         private void btnFlightSchedule_Click(object sender, EventArgs e)

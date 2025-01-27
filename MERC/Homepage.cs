@@ -78,6 +78,21 @@ namespace MERC
 
         private void btnBook_Click(object sender, EventArgs e)
         {
+            Booking1 booking1 = new Booking1();
+            booking1.Show();
+            this.Hide();
+        }
+
+        private void navbtnBbook_Click(object sender, EventArgs e)
+        {
+            // Navigate to the Booking Wizard Panel
+            Booking1 Booking1 = new Booking1();
+            Booking1.Show();
+            this.Hide();
+        }
+
+        private void navbtnHomepage_Click(object sender, EventArgs e)
+        {
 
         }
     }

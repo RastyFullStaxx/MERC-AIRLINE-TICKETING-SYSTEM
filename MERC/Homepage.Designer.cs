@@ -83,7 +83,9 @@
             navbtnHomepage.Name = "navbtnHomepage";
             navbtnHomepage.Size = new Size(173, 34);
             navbtnHomepage.TabIndex = 2;
+            navbtnHomepage.Text = " ";
             navbtnHomepage.UseVisualStyleBackColor = false;
+            navbtnHomepage.Click += navbtnHomepage_Click;
             // 
             // navbtnBbook
             // 
@@ -99,7 +101,9 @@
             navbtnBbook.Name = "navbtnBbook";
             navbtnBbook.Size = new Size(171, 34);
             navbtnBbook.TabIndex = 3;
+            navbtnBbook.Text = " ";
             navbtnBbook.UseVisualStyleBackColor = false;
+            navbtnBbook.Click += navbtnBbook_Click;
             // 
             // navbtnViewBooking
             // 
@@ -115,6 +119,7 @@
             navbtnViewBooking.Name = "navbtnViewBooking";
             navbtnViewBooking.Size = new Size(206, 33);
             navbtnViewBooking.TabIndex = 4;
+            navbtnViewBooking.Text = " ";
             navbtnViewBooking.UseVisualStyleBackColor = false;
             // 
             // navbtnFlighSchedule
@@ -131,6 +136,7 @@
             navbtnFlighSchedule.Name = "navbtnFlighSchedule";
             navbtnFlighSchedule.Size = new Size(216, 34);
             navbtnFlighSchedule.TabIndex = 5;
+            navbtnFlighSchedule.Text = " ";
             navbtnFlighSchedule.UseVisualStyleBackColor = false;
             // 
             // navbtnTransactions
@@ -147,6 +153,7 @@
             navbtnTransactions.Name = "navbtnTransactions";
             navbtnTransactions.Size = new Size(188, 33);
             navbtnTransactions.TabIndex = 6;
+            navbtnTransactions.Text = " ";
             navbtnTransactions.UseVisualStyleBackColor = false;
             // 
             // navbtnAboutUs
@@ -163,6 +170,7 @@
             navbtnAboutUs.Name = "navbtnAboutUs";
             navbtnAboutUs.Size = new Size(151, 33);
             navbtnAboutUs.TabIndex = 7;
+            navbtnAboutUs.Text = " ";
             navbtnAboutUs.UseVisualStyleBackColor = false;
             // 
             // Homepage
