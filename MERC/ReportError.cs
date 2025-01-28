@@ -10,7 +10,7 @@ using System.Windows.Forms;
 
 namespace MERC
 {
-    public partial class ReportError : BaseForm
+    public partial class ReportError : Form
     {
         public ReportError()
         {

@@ -1,6 +1,6 @@
 ﻿namespace MERC
 {
-    partial class LandingPage : BaseForm
+    partial class LandingPage
     {
         /// <summary>
         ///  Required designer variable.

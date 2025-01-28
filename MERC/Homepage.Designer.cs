@@ -1,6 +1,6 @@
 ﻿namespace MERC
 {
-    partial class Homepage : BaseForm
+    partial class Homepage
     {
         /// <summary>
         /// Required designer variable.

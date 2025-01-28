@@ -1,6 +1,6 @@
 namespace MERC
 {
-    public partial class LandingPage : BaseForm
+    public partial class LandingPage : Form
     {
         public LandingPage()
         {
