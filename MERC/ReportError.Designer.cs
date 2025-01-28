@@ -1,6 +1,6 @@
 ﻿namespace MERC
 {
-    partial class ReportError
+    partial class ReportError : BaseForm
     {
         /// <summary>
         /// Required designer variable.

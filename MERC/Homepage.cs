@@ -23,7 +23,7 @@ using System.Windows.Forms;
 
 namespace MERC
 {
-    public partial class Homepage : Form
+    public partial class Homepage : BaseForm
     {
         public Homepage()
         {
