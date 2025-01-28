@@ -1,0 +1,13 @@
+CREATE DATABASE mercdb;
+
+
+USE mercdb;
+
+
+CREATE TABLE AccountInformation (
+    AccountID INT AUTO_INCREMENT PRIMARY KEY,
+    Email VARCHAR(255) NOT NULL UNIQUE,
+    Username VARCHAR(50) NOT NULL UNIQUE,
+    Password VARCHAR(255) NOT NULL,
+    PhoneNumber VARCHAR(15)
+);

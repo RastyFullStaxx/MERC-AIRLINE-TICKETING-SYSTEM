@@ -233,7 +233,6 @@
             Controls.Add(panel1);
             Name = "Register_LogIn";
             Text = "Register_LogIn";
-            Load += Register_LogIn_Load_1;
             panel1.ResumeLayout(false);
             panel1.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)imgLogInPreset).EndInit();

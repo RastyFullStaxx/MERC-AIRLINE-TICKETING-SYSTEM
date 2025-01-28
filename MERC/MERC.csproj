@@ -10,6 +10,11 @@
 
   <ItemGroup>
     <Folder Include="assets\" />
+    <Folder Include="Classes\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="MySql.Data" Version="9.2.0" />
   </ItemGroup>
 
   <ItemGroup>
