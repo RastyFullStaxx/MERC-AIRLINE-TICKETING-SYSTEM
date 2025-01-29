@@ -36,6 +36,16 @@
             navbtnBbook = new Button();
             navbtnHomepage = new Button();
             panel1 = new Panel();
+            grpClassType = new Panel();
+            rdbtnRegular = new RadioButton();
+            rdbtnPrivate = new RadioButton();
+            rdbtnBusiness = new RadioButton();
+            grpTravelType = new Panel();
+            rdbtnOneway = new RadioButton();
+            rdbtnRoundTrip = new RadioButton();
+            cbDestination = new ComboBox();
+            cbOrigin = new ComboBox();
+            cbNumberofPassengers = new ComboBox();
             chkbTravelInsurance = new CheckBox();
             pictureBox2 = new PictureBox();
             button1 = new Button();
@@ -48,14 +58,6 @@
             imgDollarSign2 = new PictureBox();
             imgDollarSign1 = new PictureBox();
             lblClassFare = new Label();
-            txtDestination = new TextBox();
-            txtOrigin = new TextBox();
-            rdbtnRegular = new RadioButton();
-            rdbtnBusiness = new RadioButton();
-            rdbtnPrivate = new RadioButton();
-            rdbtnRoundTrip = new RadioButton();
-            rdbtnOneway = new RadioButton();
-            txtNumberOfPassengers = new TextBox();
             txtAge = new TextBox();
             txtName = new TextBox();
             imgPassengerInfo_and_FareSummary = new PictureBox();
@@ -142,6 +144,8 @@
             lvlViewDetails_FlightNumber = new Label();
             imgDetailedFlightPreset = new PictureBox();
             panel1.SuspendLayout();
+            grpClassType.SuspendLayout();
+            grpTravelType.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)pictureBox2).BeginInit();
             ((System.ComponentModel.ISupportInitialize)imgDollarSign3).BeginInit();
             ((System.ComponentModel.ISupportInitialize)imgDollarSign4).BeginInit();
@@ -291,6 +295,11 @@
             // 
             panel1.AutoScroll = true;
             panel1.BackColor = Color.Transparent;
+            panel1.Controls.Add(grpClassType);
+            panel1.Controls.Add(grpTravelType);
+            panel1.Controls.Add(cbDestination);
+            panel1.Controls.Add(cbOrigin);
+            panel1.Controls.Add(cbNumberofPassengers);
             panel1.Controls.Add(chkbTravelInsurance);
             panel1.Controls.Add(pictureBox2);
             panel1.Controls.Add(button1);
@@ -303,14 +312,6 @@
             panel1.Controls.Add(imgDollarSign2);
             panel1.Controls.Add(imgDollarSign1);
             panel1.Controls.Add(lblClassFare);
-            panel1.Controls.Add(txtDestination);
-            panel1.Controls.Add(txtOrigin);
-            panel1.Controls.Add(rdbtnRegular);
-            panel1.Controls.Add(rdbtnBusiness);
-            panel1.Controls.Add(rdbtnPrivate);
-            panel1.Controls.Add(rdbtnRoundTrip);
-            panel1.Controls.Add(rdbtnOneway);
-            panel1.Controls.Add(txtNumberOfPassengers);
             panel1.Controls.Add(txtAge);
             panel1.Controls.Add(txtName);
             panel1.Controls.Add(imgPassengerInfo_and_FareSummary);
@@ -319,6 +320,129 @@
             panel1.Size = new Size(972, 896);
             panel1.TabIndex = 14;
             panel1.Visible = false;
+            // 
+            // grpClassType
+            // 
+            grpClassType.BackColor = Color.Transparent;
+            grpClassType.Controls.Add(rdbtnRegular);
+            grpClassType.Controls.Add(rdbtnPrivate);
+            grpClassType.Controls.Add(rdbtnBusiness);
+            grpClassType.Location = new Point(33, 436);
+            grpClassType.Name = "grpClassType";
+            grpClassType.Size = new Size(368, 49);
+            grpClassType.TabIndex = 48;
+            // 
+            // rdbtnRegular
+            // 
+            rdbtnRegular.AutoSize = true;
+            rdbtnRegular.BackColor = Color.Transparent;
+            rdbtnRegular.Font = new Font("Segoe UI", 14.25F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            rdbtnRegular.ForeColor = Color.White;
+            rdbtnRegular.Location = new Point(266, 5);
+            rdbtnRegular.Name = "rdbtnRegular";
+            rdbtnRegular.Size = new Size(94, 29);
+            rdbtnRegular.TabIndex = 21;
+            rdbtnRegular.TabStop = true;
+            rdbtnRegular.Text = "Regular";
+            rdbtnRegular.UseVisualStyleBackColor = false;
+            // 
+            // rdbtnPrivate
+            // 
+            rdbtnPrivate.AutoSize = true;
+            rdbtnPrivate.BackColor = Color.Transparent;
+            rdbtnPrivate.Font = new Font("Segoe UI", 14.25F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            rdbtnPrivate.ForeColor = Color.White;
+            rdbtnPrivate.Location = new Point(9, 5);
+            rdbtnPrivate.Name = "rdbtnPrivate";
+            rdbtnPrivate.Size = new Size(88, 29);
+            rdbtnPrivate.TabIndex = 19;
+            rdbtnPrivate.TabStop = true;
+            rdbtnPrivate.Text = "Private";
+            rdbtnPrivate.UseVisualStyleBackColor = false;
+            // 
+            // rdbtnBusiness
+            // 
+            rdbtnBusiness.AutoSize = true;
+            rdbtnBusiness.BackColor = Color.Transparent;
+            rdbtnBusiness.Font = new Font("Segoe UI", 14.25F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            rdbtnBusiness.ForeColor = Color.White;
+            rdbtnBusiness.Location = new Point(123, 5);
+            rdbtnBusiness.Name = "rdbtnBusiness";
+            rdbtnBusiness.Size = new Size(102, 29);
+            rdbtnBusiness.TabIndex = 20;
+            rdbtnBusiness.TabStop = true;
+            rdbtnBusiness.Text = "Business";
+            rdbtnBusiness.UseVisualStyleBackColor = false;
+            // 
+            // grpTravelType
+            // 
+            grpTravelType.BackColor = Color.Transparent;
+            grpTravelType.Controls.Add(rdbtnOneway);
+            grpTravelType.Controls.Add(rdbtnRoundTrip);
+            grpTravelType.Location = new Point(33, 343);
+            grpTravelType.Name = "grpTravelType";
+            grpTravelType.Size = new Size(260, 39);
+            grpTravelType.TabIndex = 47;
+            // 
+            // rdbtnOneway
+            // 
+            rdbtnOneway.AutoSize = true;
+            rdbtnOneway.BackColor = Color.Transparent;
+            rdbtnOneway.Font = new Font("Segoe UI", 14.25F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            rdbtnOneway.ForeColor = Color.White;
+            rdbtnOneway.Location = new Point(9, 6);
+            rdbtnOneway.Name = "rdbtnOneway";
+            rdbtnOneway.Size = new Size(98, 29);
+            rdbtnOneway.TabIndex = 15;
+            rdbtnOneway.TabStop = true;
+            rdbtnOneway.Text = "Oneway";
+            rdbtnOneway.UseVisualStyleBackColor = false;
+            // 
+            // rdbtnRoundTrip
+            // 
+            rdbtnRoundTrip.AutoSize = true;
+            rdbtnRoundTrip.BackColor = Color.Transparent;
+            rdbtnRoundTrip.Font = new Font("Segoe UI", 14.25F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            rdbtnRoundTrip.ForeColor = Color.White;
+            rdbtnRoundTrip.Location = new Point(123, 6);
+            rdbtnRoundTrip.Name = "rdbtnRoundTrip";
+            rdbtnRoundTrip.Size = new Size(120, 29);
+            rdbtnRoundTrip.TabIndex = 18;
+            rdbtnRoundTrip.TabStop = true;
+            rdbtnRoundTrip.Text = "Round Trip";
+            rdbtnRoundTrip.UseVisualStyleBackColor = false;
+            // 
+            // cbDestination
+            // 
+            cbDestination.Font = new Font("Segoe UI", 9.75F);
+            cbDestination.FormattingEnabled = true;
+            cbDestination.Items.AddRange(new object[] { "Manila", "", "Batanes", "", "Palawan", "", "South Korea", "", "Japan", "", "Vietnam" });
+            cbDestination.Location = new Point(469, 441);
+            cbDestination.Name = "cbDestination";
+            cbDestination.Size = new Size(374, 25);
+            cbDestination.TabIndex = 49;
+            // 
+            // cbOrigin
+            // 
+            cbOrigin.Font = new Font("Segoe UI", 9.75F);
+            cbOrigin.FormattingEnabled = true;
+            cbOrigin.Items.AddRange(new object[] { "Manila", "Batanes", "Palawan", "South Korea", "Japan", "Vietnam" });
+            cbOrigin.Location = new Point(469, 349);
+            cbOrigin.Name = "cbOrigin";
+            cbOrigin.Size = new Size(374, 25);
+            cbOrigin.TabIndex = 48;
+            // 
+            // cbNumberofPassengers
+            // 
+            cbNumberofPassengers.DisplayMember = "Manila\nBatanes\nPalawan\nSouth Korea\nJapan\nVietnam";
+            cbNumberofPassengers.Font = new Font("Segoe UI", 9.75F);
+            cbNumberofPassengers.FormattingEnabled = true;
+            cbNumberofPassengers.Items.AddRange(new object[] { "1", "2", "3", "4", "5", "6", "7", "8", "9", "10" });
+            cbNumberofPassengers.Location = new Point(567, 140);
+            cbNumberofPassengers.Name = "cbNumberofPassengers";
+            cbNumberofPassengers.Size = new Size(278, 25);
+            cbNumberofPassengers.TabIndex = 47;
+            cbNumberofPassengers.ValueMember = "Manila\nBatanes\nPalawan\nSouth Korea\nJapan\nVietnam";
             // 
             // chkbTravelInsurance
             // 
@@ -459,100 +583,6 @@
             lblClassFare.Size = new Size(376, 23);
             lblClassFare.TabIndex = 15;
             lblClassFare.Text = "00.00";
-            // 
-            // txtDestination
-            // 
-            txtDestination.Font = new Font("Segoe UI", 9.75F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            txtDestination.Location = new Point(464, 441);
-            txtDestination.Name = "txtDestination";
-            txtDestination.Size = new Size(379, 25);
-            txtDestination.TabIndex = 23;
-            // 
-            // txtOrigin
-            // 
-            txtOrigin.Font = new Font("Segoe UI", 9.75F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            txtOrigin.Location = new Point(467, 349);
-            txtOrigin.Name = "txtOrigin";
-            txtOrigin.Size = new Size(379, 25);
-            txtOrigin.TabIndex = 22;
-            // 
-            // rdbtnRegular
-            // 
-            rdbtnRegular.AutoSize = true;
-            rdbtnRegular.BackColor = Color.Transparent;
-            rdbtnRegular.Font = new Font("Segoe UI", 14.25F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            rdbtnRegular.ForeColor = Color.White;
-            rdbtnRegular.Location = new Point(299, 441);
-            rdbtnRegular.Name = "rdbtnRegular";
-            rdbtnRegular.Size = new Size(94, 29);
-            rdbtnRegular.TabIndex = 21;
-            rdbtnRegular.TabStop = true;
-            rdbtnRegular.Text = "Regular";
-            rdbtnRegular.UseVisualStyleBackColor = false;
-            // 
-            // rdbtnBusiness
-            // 
-            rdbtnBusiness.AutoSize = true;
-            rdbtnBusiness.BackColor = Color.Transparent;
-            rdbtnBusiness.Font = new Font("Segoe UI", 14.25F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            rdbtnBusiness.ForeColor = Color.White;
-            rdbtnBusiness.Location = new Point(156, 441);
-            rdbtnBusiness.Name = "rdbtnBusiness";
-            rdbtnBusiness.Size = new Size(102, 29);
-            rdbtnBusiness.TabIndex = 20;
-            rdbtnBusiness.TabStop = true;
-            rdbtnBusiness.Text = "Business";
-            rdbtnBusiness.UseVisualStyleBackColor = false;
-            // 
-            // rdbtnPrivate
-            // 
-            rdbtnPrivate.AutoSize = true;
-            rdbtnPrivate.BackColor = Color.Transparent;
-            rdbtnPrivate.Font = new Font("Segoe UI", 14.25F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            rdbtnPrivate.ForeColor = Color.White;
-            rdbtnPrivate.Location = new Point(42, 441);
-            rdbtnPrivate.Name = "rdbtnPrivate";
-            rdbtnPrivate.Size = new Size(88, 29);
-            rdbtnPrivate.TabIndex = 19;
-            rdbtnPrivate.TabStop = true;
-            rdbtnPrivate.Text = "Private";
-            rdbtnPrivate.UseVisualStyleBackColor = false;
-            // 
-            // rdbtnRoundTrip
-            // 
-            rdbtnRoundTrip.AutoSize = true;
-            rdbtnRoundTrip.BackColor = Color.Transparent;
-            rdbtnRoundTrip.Font = new Font("Segoe UI", 14.25F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            rdbtnRoundTrip.ForeColor = Color.White;
-            rdbtnRoundTrip.Location = new Point(156, 349);
-            rdbtnRoundTrip.Name = "rdbtnRoundTrip";
-            rdbtnRoundTrip.Size = new Size(120, 29);
-            rdbtnRoundTrip.TabIndex = 18;
-            rdbtnRoundTrip.TabStop = true;
-            rdbtnRoundTrip.Text = "Round Trip";
-            rdbtnRoundTrip.UseVisualStyleBackColor = false;
-            // 
-            // rdbtnOneway
-            // 
-            rdbtnOneway.AutoSize = true;
-            rdbtnOneway.BackColor = Color.Transparent;
-            rdbtnOneway.Font = new Font("Segoe UI", 14.25F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            rdbtnOneway.ForeColor = Color.White;
-            rdbtnOneway.Location = new Point(42, 349);
-            rdbtnOneway.Name = "rdbtnOneway";
-            rdbtnOneway.Size = new Size(98, 29);
-            rdbtnOneway.TabIndex = 15;
-            rdbtnOneway.TabStop = true;
-            rdbtnOneway.Text = "Oneway";
-            rdbtnOneway.UseVisualStyleBackColor = false;
-            // 
-            // txtNumberOfPassengers
-            // 
-            txtNumberOfPassengers.Font = new Font("Segoe UI", 9.75F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            txtNumberOfPassengers.Location = new Point(564, 142);
-            txtNumberOfPassengers.Name = "txtNumberOfPassengers";
-            txtNumberOfPassengers.Size = new Size(279, 25);
-            txtNumberOfPassengers.TabIndex = 17;
             // 
             // txtAge
             // 
@@ -1579,15 +1609,15 @@
             Controls.Add(navbtnViewBooking);
             Controls.Add(navbtnBbook);
             Controls.Add(navbtnHomepage);
-            Controls.Add(panel6);
-            Controls.Add(panel4);
-            Controls.Add(panel3);
-            Controls.Add(panel2);
             Controls.Add(panel1);
             Controls.Add(panel9_DetailedFlightView);
             Controls.Add(panel8);
             Controls.Add(panel7);
             Controls.Add(panel5);
+            Controls.Add(panel6);
+            Controls.Add(panel4);
+            Controls.Add(panel3);
+            Controls.Add(panel2);
             FormBorderStyle = FormBorderStyle.None;
             Name = "Homepage";
             StartPosition = FormStartPosition.CenterScreen;
@@ -1595,6 +1625,10 @@
             Load += Booking1_Load;
             panel1.ResumeLayout(false);
             panel1.PerformLayout();
+            grpClassType.ResumeLayout(false);
+            grpClassType.PerformLayout();
+            grpTravelType.ResumeLayout(false);
+            grpTravelType.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)pictureBox2).EndInit();
             ((System.ComponentModel.ISupportInitialize)imgDollarSign3).EndInit();
             ((System.ComponentModel.ISupportInitialize)imgDollarSign4).EndInit();
@@ -1658,14 +1692,11 @@
         private PictureBox imgPassengerInfo_and_FareSummary;
         private TextBox txtName;
         private RadioButton rdbtnOneway;
-        private TextBox txtNumberOfPassengers;
         private TextBox txtAge;
         private RadioButton rdbtnRegular;
         private RadioButton rdbtnBusiness;
         private RadioButton rdbtnPrivate;
         private RadioButton rdbtnRoundTrip;
-        private TextBox txtDestination;
-        private TextBox txtOrigin;
         private Label lblClassFare;
         private PictureBox imgDollarSign3;
         private PictureBox imgDollarSign4;
@@ -1754,5 +1785,10 @@
         private Label lblViewDetails_BusinessTax;
         private Label lblViewDetails_PrivateTax;
         private Button lblViewDetails_Return;
+        private ComboBox cbDestination;
+        private ComboBox cbOrigin;
+        private ComboBox cbNumberofPassengers;
+        private Panel grpClassType;
+        private Panel grpTravelType;
     }
 }

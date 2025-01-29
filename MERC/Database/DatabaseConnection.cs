@@ -10,10 +10,10 @@ namespace MERC.Database
     internal class DatabaseConnection
     {
         // Connection string for your MySQL database
-        private readonly string connectionString = "server=localhost;database=mercdb;uid=root;pwd='';";
+        private readonly string connectionString = "server=localhost;port=3307;database=mercdb;uid=root;pwd='';";
 
         //RASTY = connectionString = "server=localhost;database=mercdb;uid=root;pwd='180503';";
-        // Rasty = connectionString = "server=localhost;port=3307;database=mercdb;uid=root;pwd='';";
+        //Rasty = connectionString = "server=localhost;port=3307;database=mercdb;uid=root;pwd='';";
 
 
         public MySqlConnection GetConnection()

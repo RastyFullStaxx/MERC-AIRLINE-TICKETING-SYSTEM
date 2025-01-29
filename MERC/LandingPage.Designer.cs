@@ -1,6 +1,6 @@
 ﻿namespace MERC
 {
-    partial class LandingPage
+    partial class LandingPage : BaseForm
     {
         /// <summary>
         ///  Required designer variable.
@@ -135,8 +135,8 @@
         private void btnBook_Click(object sender, EventArgs e)
         {
             // Navigate to the Booking Wizard Panel
-            Homepage Booking1 = new Homepage();
-            Booking1.Show();
+            Homepage homepage = new Homepage(AccountID, Username, Email, PhoneNumber, FullName);
+            homepage.Show();
             this.Hide();
 
         }
@@ -150,7 +150,7 @@
         private void btnHomePage_Click(object sender, EventArgs e)
         {
             // Create an instance of the Homepage form
-            Homepage homepage = new Homepage();
+            Homepage homepage = new Homepage(AccountID, Username, Email, PhoneNumber, FullName);
 
             // Show the Homepage form
             homepage.Show();
@@ -168,7 +168,8 @@
 
         private void btnViewPage_Click(object sender, EventArgs e)
         {
-            // Add logic for button click here
+            Homepage booking = new Homepage(AccountID, Username, Email, PhoneNumber, FullName);
+            booking.Show();
 
         }
 

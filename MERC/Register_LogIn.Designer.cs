@@ -70,6 +70,7 @@
             txtPassword.Name = "txtPassword";
             txtPassword.Size = new Size(423, 25);
             txtPassword.TabIndex = 21;
+            txtPassword.UseSystemPasswordChar = true;
             // 
             // txtUsername
             // 
@@ -197,6 +198,7 @@
             txtConfrimRegister_Password.Name = "txtConfrimRegister_Password";
             txtConfrimRegister_Password.Size = new Size(423, 25);
             txtConfrimRegister_Password.TabIndex = 25;
+            txtConfrimRegister_Password.UseSystemPasswordChar = true;
             // 
             // txtRegister_Password
             // 
@@ -205,6 +207,7 @@
             txtRegister_Password.Name = "txtRegister_Password";
             txtRegister_Password.Size = new Size(423, 25);
             txtRegister_Password.TabIndex = 24;
+            txtRegister_Password.UseSystemPasswordChar = true;
             // 
             // txtRegister_Email
             // 
@@ -229,8 +232,8 @@
             AutoScaleMode = AutoScaleMode.Font;
             BackgroundImage = (Image)resources.GetObject("$this.BackgroundImage");
             ClientSize = new Size(1440, 1024);
-            Controls.Add(panel2);
             Controls.Add(panel1);
+            Controls.Add(panel2);
             Name = "Register_LogIn";
             Text = "Register_LogIn";
             panel1.ResumeLayout(false);

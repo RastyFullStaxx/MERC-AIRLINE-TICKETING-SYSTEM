@@ -31,7 +31,7 @@
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(ReportError));
             lblErrorText = new Label();
             lblErrorCode = new Label();
-            label1 = new Label();
+            lblErrorDescription = new Label();
             btnRetry = new Button();
             SuspendLayout();
             // 
@@ -49,7 +49,6 @@
             // 
             // lblErrorCode
             // 
-            lblErrorCode.AutoSize = true;
             lblErrorCode.BackColor = Color.Transparent;
             lblErrorCode.Font = new Font("Segoe UI", 72F, FontStyle.Bold, GraphicsUnit.Point, 0);
             lblErrorCode.ForeColor = Color.White;
@@ -58,18 +57,19 @@
             lblErrorCode.Size = new Size(109, 128);
             lblErrorCode.TabIndex = 1;
             lblErrorCode.Text = "1";
+            lblErrorCode.TextAlign = ContentAlignment.MiddleCenter;
             // 
-            // label1
+            // lblErrorDescription
             // 
-            label1.AutoSize = true;
-            label1.BackColor = Color.Transparent;
-            label1.Font = new Font("Segoe UI", 12F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            label1.ForeColor = Color.White;
-            label1.Location = new Point(312, 341);
-            label1.Name = "label1";
-            label1.Size = new Size(317, 21);
-            label1.TabIndex = 2;
-            label1.Text = "Exceed the number of passenger reservation";
+            lblErrorDescription.BackColor = Color.Transparent;
+            lblErrorDescription.Font = new Font("Segoe UI", 12F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            lblErrorDescription.ForeColor = Color.White;
+            lblErrorDescription.Location = new Point(191, 341);
+            lblErrorDescription.Name = "lblErrorDescription";
+            lblErrorDescription.Size = new Size(546, 62);
+            lblErrorDescription.TabIndex = 2;
+            lblErrorDescription.Text = "Exceed the number of passenger reservation";
+            lblErrorDescription.TextAlign = ContentAlignment.MiddleCenter;
             // 
             // btnRetry
             // 
@@ -95,11 +95,12 @@
             BackgroundImage = (Image)resources.GetObject("$this.BackgroundImage");
             ClientSize = new Size(929, 586);
             Controls.Add(btnRetry);
-            Controls.Add(label1);
+            Controls.Add(lblErrorDescription);
             Controls.Add(lblErrorText);
             Controls.Add(lblErrorCode);
             FormBorderStyle = FormBorderStyle.None;
             Name = "ReportError";
+            StartPosition = FormStartPosition.CenterScreen;
             Text = "ReportError";
             ResumeLayout(false);
             PerformLayout();
@@ -109,7 +110,7 @@
 
         private Label lblErrorText;
         private Label lblErrorCode;
-        private Label label1;
+        private Label lblErrorDescription;
         private Button btnRetry;
     }
 }

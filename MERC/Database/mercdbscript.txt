@@ -4,10 +4,154 @@ CREATE DATABASE mercdb;
 USE mercdb;
 
 
+-- 1. Create the AccountInformation Table
 CREATE TABLE AccountInformation (
     AccountID INT AUTO_INCREMENT PRIMARY KEY,
     Email VARCHAR(255) NOT NULL UNIQUE,
     Username VARCHAR(50) NOT NULL UNIQUE,
     Password VARCHAR(255) NOT NULL,
-    PhoneNumber VARCHAR(15)
-);
+    PhoneNumber VARCHAR(15),
+    FullName VARCHAR(100) NOT NULL
+) ENGINE=InnoDB;
+
+-- 2. Create the BookingInformation Table
+CREATE TABLE BookingInformation (
+    BookingID INT AUTO_INCREMENT PRIMARY KEY,
+    ControlNumber VARCHAR(50) NOT NULL UNIQUE,
+    FlightType ENUM('Local', 'International') NOT NULL,
+    TravelType ENUM('One-way', 'Round-trip') NOT NULL,
+    NumberOfPassengers INT NOT NULL,
+    TransactionFee DECIMAL(10,2) NOT NULL,
+    TotalCost DECIMAL(10,2) NOT NULL,
+    AccountID INT NOT NULL,
+    FOREIGN KEY (AccountID) REFERENCES AccountInformation(AccountID) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB;
+
+-- 3. Create the PassengerInformation Table
+CREATE TABLE PassengerInformation (
+    PassengerID INT AUTO_INCREMENT PRIMARY KEY,
+    Name VARCHAR(100) NOT NULL,
+    Age INT NOT NULL CHECK (Age > 0),
+    PassengerType ENUM('Child', 'Adult', 'Senior'),
+    AccountID INT NOT NULL,
+    BookingID INT NOT NULL,
+    FOREIGN KEY (AccountID) REFERENCES AccountInformation(AccountID) ON DELETE CASCADE ON UPDATE CASCADE,
+    FOREIGN KEY (BookingID) REFERENCES BookingInformation(BookingID) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB;
+
+-- 4. Create the AirplaneInformation Table
+CREATE TABLE AirplaneInformation (
+    AirplaneID INT AUTO_INCREMENT PRIMARY KEY,
+    Type ENUM('Private', 'Business', 'Regular') NOT NULL,
+    MaxCapacity INT NOT NULL,
+    CrewCount INT NOT NULL
+) ENGINE=InnoDB;
+
+-- 5. Create the FlightInformation Table
+CREATE TABLE FlightInformation (
+    FlightID INT AUTO_INCREMENT PRIMARY KEY,
+    Origin VARCHAR(100) NOT NULL,
+    Destination VARCHAR(100) NOT NULL,
+    PrivateFare DECIMAL(10,2) NOT NULL,
+    BusinessFare DECIMAL(10,2) NOT NULL,
+    RegularFare DECIMAL(10,2) NOT NULL
+) ENGINE=InnoDB;
+
+-- 6. Create the TransactionInformation Table
+CREATE TABLE TransactionInformation (
+    TransactionID INT AUTO_INCREMENT PRIMARY KEY,
+    BookingID INT NOT NULL,
+    TravelTax DECIMAL(10,2) NOT NULL,
+    InsuranceFee DECIMAL(10,2),
+    TotalAmountPaid DECIMAL(10,2) NOT NULL,
+    FOREIGN KEY (BookingID) REFERENCES BookingInformation(BookingID) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB;
+
+-- 7. Create the TravelTaxInformation Table
+CREATE TABLE TravelTaxInformation (
+    ClassType ENUM('Private', 'Business', 'Regular') PRIMARY KEY,
+    TravelTaxPerPerson DECIMAL(10,2) NOT NULL
+) ENGINE=InnoDB;
+
+-- 8. Create the InsuranceInformation Table
+CREATE TABLE InsuranceInformation (
+    ClassType ENUM('Private', 'Business', 'Regular') PRIMARY KEY,
+    InsuranceFeePerPerson DECIMAL(10,2) NOT NULL
+) ENGINE=InnoDB;
+
+-- 9. Create the TransactionFeeInformation Table
+CREATE TABLE TransactionFeeInformation (
+    ClassType ENUM('Private', 'Business', 'Regular') PRIMARY KEY,
+    TransactionFeePerBooking DECIMAL(10,2) NOT NULL
+) ENGINE=InnoDB;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+-- Insert data into AirplaneInformation
+INSERT INTO AirplaneInformation (Type, MaxCapacity, CrewCount)
+VALUES
+    ('Private', 20, 6),
+    ('Business', 30, 7),
+    ('Regular', 100, 12);
+
+-- Insert data into FlightInformation
+INSERT INTO FlightInformation (Origin, Destination, PrivateFare, BusinessFare, RegularFare)
+VALUES
+    ('Manila', 'Batanes', 8000.00, 12500.00, 3500.00),
+    ('Batanes', 'Manila', 9800.00, 12950.00, 3900.00),
+    ('Manila', 'Palawan', 9100.00, 10500.00, 3200.00),
+    ('Palawan', 'Manila', 9850.00, 10975.00, 3575.00),
+    ('Manila', 'South Korea', 27450.00, 37390.00, 12055.00),
+    ('South Korea', 'Manila', 30890.00, 39650.00, 13100.00),
+    ('Manila', 'Japan', 40450.00, 45355.00, 27800.00),
+    ('Japan', 'Manila', 43855.00, 49780.00, 29400.00),
+    ('Manila', 'Vietnam', 8505.00, 12345.00, 3200.00),
+    ('Vietnam', 'Manila', 14300.00, 16320.00, 4600.00);
+
+-- Insert data into TravelTaxInformation
+INSERT INTO TravelTaxInformation (ClassType, TravelTaxPerPerson)
+VALUES
+    ('Private', 4260.00),
+    ('Business', 5700.00),
+    ('Regular', 2500.00);
+
+-- Insert data into InsuranceInformation
+INSERT INTO InsuranceInformation (ClassType, InsuranceFeePerPerson)
+VALUES
+    ('Private', 4500.00),
+    ('Business', 6500.00),
+    ('Regular', 950.00);
+
+-- Insert data into TransactionFeeInformation
+INSERT INTO TransactionFeeInformation (ClassType, TransactionFeePerBooking)
+VALUES
+    ('Private', 550.00),
+    ('Business', 550.00),
+    ('Regular', 255.00);
