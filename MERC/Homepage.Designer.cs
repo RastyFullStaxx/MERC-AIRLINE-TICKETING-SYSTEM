@@ -87,10 +87,11 @@
             btnBook = new Button();
             pictureBox1 = new PictureBox();
             panel4 = new Panel();
+            pnlDevelopersPhotos = new Panel();
+            pictureBox5 = new PictureBox();
             imgAboutUsPreset = new PictureBox();
-            pnlDevelopersPhoto = new Panel();
             panel5 = new Panel();
-            tblFlightSchedules = new TableLayoutPanel();
+            tblViewFlightSchedules = new DataGridView();
             dtpSearchScheduleDate = new DateTimePicker();
             cbSearchSchedule_Destination = new ComboBox();
             cbSearchSchedule_Origin = new ComboBox();
@@ -100,14 +101,14 @@
             imgbSlideshow = new PictureBox();
             btnBook_HomePageHomePage = new Button();
             panel7 = new Panel();
-            tblViewBookings = new TableLayoutPanel();
+            tblViewBookings = new DataGridView();
             dtpSearchBookingsDate = new DateTimePicker();
             cbSearchBookings_Destination = new ComboBox();
             cbSearchBookings_Origin = new ComboBox();
             pictureBox4 = new PictureBox();
             panel8 = new Panel();
+            tblViewTransactions = new DataGridView();
             txtTransactions_SearchBar = new TextBox();
-            tblViewTransactions = new TableLayoutPanel();
             cbTransaction_SearchBy = new ComboBox();
             pictureBox8 = new PictureBox();
             panel9_DetailedFlightView = new Panel();
@@ -163,15 +164,20 @@
             ((System.ComponentModel.ISupportInitialize)imgMercLogo).BeginInit();
             ((System.ComponentModel.ISupportInitialize)pictureBox1).BeginInit();
             panel4.SuspendLayout();
+            pnlDevelopersPhotos.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)pictureBox5).BeginInit();
             ((System.ComponentModel.ISupportInitialize)imgAboutUsPreset).BeginInit();
             panel5.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)tblViewFlightSchedules).BeginInit();
             ((System.ComponentModel.ISupportInitialize)imgPresets1).BeginInit();
             panel6.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)pictureBox3).BeginInit();
             ((System.ComponentModel.ISupportInitialize)imgbSlideshow).BeginInit();
             panel7.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)tblViewBookings).BeginInit();
             ((System.ComponentModel.ISupportInitialize)pictureBox4).BeginInit();
             panel8.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)tblViewTransactions).BeginInit();
             ((System.ComponentModel.ISupportInitialize)pictureBox8).BeginInit();
             panel9_DetailedFlightView.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)dollarsign10).BeginInit();
@@ -481,7 +487,6 @@
             button1.Size = new Size(269, 57);
             button1.TabIndex = 34;
             button1.UseVisualStyleBackColor = false;
-            button1.Click += button1_Click;
             // 
             // btnConfirmBooking
             // 
@@ -635,7 +640,7 @@
             panel2.Controls.Add(pictureBox7);
             panel2.Location = new Point(468, 128);
             panel2.Name = "panel2";
-            panel2.Size = new Size(972, 704);
+            panel2.Size = new Size(972, 808);
             panel2.TabIndex = 39;
             panel2.Visible = false;
             // 
@@ -654,7 +659,7 @@
             btnEditBooking.Size = new Size(269, 57);
             btnEditBooking.TabIndex = 40;
             btnEditBooking.UseVisualStyleBackColor = false;
-            btnEditBooking.Click += btnEditBooking_Click_1;
+            btnEditBooking.Click += btnEditBooking_Click;
             // 
             // lblConfirm_TotalCost
             // 
@@ -789,7 +794,7 @@
             lblConfirm_CancelBooking.Size = new Size(269, 57);
             lblConfirm_CancelBooking.TabIndex = 34;
             lblConfirm_CancelBooking.UseVisualStyleBackColor = false;
-            lblConfirm_CancelBooking.Click += button2_Click;
+            lblConfirm_CancelBooking.Click += lblConfirm_CancelBooking_Click;
             // 
             // lblConfirm_ConfirmBooking
             // 
@@ -868,6 +873,7 @@
             pictureBox7.Size = new Size(888, 795);
             pictureBox7.TabIndex = 0;
             pictureBox7.TabStop = false;
+            pictureBox7.Click += pictureBox7_Click;
             // 
             // imgPanelNameHeader
             // 
@@ -931,13 +937,33 @@
             // panel4
             // 
             panel4.BackColor = Color.Transparent;
+            panel4.Controls.Add(pnlDevelopersPhotos);
             panel4.Controls.Add(imgAboutUsPreset);
-            panel4.Controls.Add(pnlDevelopersPhoto);
-            panel4.Location = new Point(468, 128);
+            panel4.Location = new Point(415, 121);
             panel4.Name = "panel4";
-            panel4.Size = new Size(972, 896);
+            panel4.Size = new Size(1025, 1368);
             panel4.TabIndex = 41;
             panel4.Visible = false;
+            // 
+            // pnlDevelopersPhotos
+            // 
+            pnlDevelopersPhotos.AutoScroll = true;
+            pnlDevelopersPhotos.BackColor = Color.Transparent;
+            pnlDevelopersPhotos.Controls.Add(pictureBox5);
+            pnlDevelopersPhotos.Location = new Point(0, 436);
+            pnlDevelopersPhotos.Name = "pnlDevelopersPhotos";
+            pnlDevelopersPhotos.Size = new Size(1008, 468);
+            pnlDevelopersPhotos.TabIndex = 47;
+            // 
+            // pictureBox5
+            // 
+            pictureBox5.BackColor = Color.Transparent;
+            pictureBox5.Image = (Image)resources.GetObject("pictureBox5.Image");
+            pictureBox5.Location = new Point(3, 3);
+            pictureBox5.Name = "pictureBox5";
+            pictureBox5.Size = new Size(1832, 438);
+            pictureBox5.TabIndex = 48;
+            pictureBox5.TabStop = false;
             // 
             // imgAboutUsPreset
             // 
@@ -949,17 +975,10 @@
             imgAboutUsPreset.TabIndex = 42;
             imgAboutUsPreset.TabStop = false;
             // 
-            // pnlDevelopersPhoto
-            // 
-            pnlDevelopersPhoto.Location = new Point(3, 457);
-            pnlDevelopersPhoto.Name = "pnlDevelopersPhoto";
-            pnlDevelopersPhoto.Size = new Size(949, 436);
-            pnlDevelopersPhoto.TabIndex = 43;
-            // 
             // panel5
             // 
             panel5.BackColor = Color.Transparent;
-            panel5.Controls.Add(tblFlightSchedules);
+            panel5.Controls.Add(tblViewFlightSchedules);
             panel5.Controls.Add(dtpSearchScheduleDate);
             panel5.Controls.Add(cbSearchSchedule_Destination);
             panel5.Controls.Add(cbSearchSchedule_Origin);
@@ -970,24 +989,19 @@
             panel5.TabIndex = 42;
             panel5.Visible = false;
             // 
-            // tblFlightSchedules
+            // tblViewFlightSchedules
             // 
-            tblFlightSchedules.AutoScroll = true;
-            tblFlightSchedules.BackgroundImageLayout = ImageLayout.None;
-            tblFlightSchedules.CellBorderStyle = TableLayoutPanelCellBorderStyle.Single;
-            tblFlightSchedules.ColumnCount = 6;
-            tblFlightSchedules.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 50F));
-            tblFlightSchedules.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 146F));
-            tblFlightSchedules.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 167F));
-            tblFlightSchedules.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 165F));
-            tblFlightSchedules.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 99F));
-            tblFlightSchedules.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 50F));
-            tblFlightSchedules.Location = new Point(3, 182);
-            tblFlightSchedules.Name = "tblFlightSchedules";
-            tblFlightSchedules.RowCount = 1;
-            tblFlightSchedules.RowStyles.Add(new RowStyle(SizeType.Absolute, 66F));
-            tblFlightSchedules.Size = new Size(750, 708);
-            tblFlightSchedules.TabIndex = 21;
+            tblViewFlightSchedules.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
+            tblViewFlightSchedules.AutoSizeRowsMode = DataGridViewAutoSizeRowsMode.AllCells;
+            tblViewFlightSchedules.BackgroundColor = Color.White;
+            tblViewFlightSchedules.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.DisableResizing;
+            tblViewFlightSchedules.Cursor = Cursors.Hand;
+            tblViewFlightSchedules.Location = new Point(3, 145);
+            tblViewFlightSchedules.Name = "tblViewFlightSchedules";
+            tblViewFlightSchedules.RowHeadersVisible = false;
+            tblViewFlightSchedules.ScrollBars = ScrollBars.None;
+            tblViewFlightSchedules.Size = new Size(750, 749);
+            tblViewFlightSchedules.TabIndex = 49;
             // 
             // dtpSearchScheduleDate
             // 
@@ -1087,22 +1101,16 @@
             // 
             // tblViewBookings
             // 
-            tblViewBookings.AutoScroll = true;
-            tblViewBookings.BackgroundImageLayout = ImageLayout.None;
-            tblViewBookings.CellBorderStyle = TableLayoutPanelCellBorderStyle.Single;
-            tblViewBookings.ColumnCount = 6;
-            tblViewBookings.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 50F));
-            tblViewBookings.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 146F));
-            tblViewBookings.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 167F));
-            tblViewBookings.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 165F));
-            tblViewBookings.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 99F));
-            tblViewBookings.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 50F));
-            tblViewBookings.Location = new Point(3, 182);
+            tblViewBookings.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
+            tblViewBookings.AutoSizeRowsMode = DataGridViewAutoSizeRowsMode.AllCells;
+            tblViewBookings.BackgroundColor = Color.White;
+            tblViewBookings.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.DisableResizing;
+            tblViewBookings.Location = new Point(0, 148);
             tblViewBookings.Name = "tblViewBookings";
-            tblViewBookings.RowCount = 1;
-            tblViewBookings.RowStyles.Add(new RowStyle(SizeType.Absolute, 66F));
-            tblViewBookings.Size = new Size(750, 708);
-            tblViewBookings.TabIndex = 21;
+            tblViewBookings.RowHeadersVisible = false;
+            tblViewBookings.ScrollBars = ScrollBars.None;
+            tblViewBookings.Size = new Size(750, 749);
+            tblViewBookings.TabIndex = 48;
             // 
             // dtpSearchBookingsDate
             // 
@@ -1142,8 +1150,8 @@
             // panel8
             // 
             panel8.BackColor = Color.Transparent;
-            panel8.Controls.Add(txtTransactions_SearchBar);
             panel8.Controls.Add(tblViewTransactions);
+            panel8.Controls.Add(txtTransactions_SearchBar);
             panel8.Controls.Add(cbTransaction_SearchBy);
             panel8.Controls.Add(pictureBox8);
             panel8.Location = new Point(462, 126);
@@ -1152,6 +1160,19 @@
             panel8.TabIndex = 45;
             panel8.Visible = false;
             // 
+            // tblViewTransactions
+            // 
+            tblViewTransactions.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
+            tblViewTransactions.AutoSizeRowsMode = DataGridViewAutoSizeRowsMode.AllCells;
+            tblViewTransactions.BackgroundColor = Color.White;
+            tblViewTransactions.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.DisableResizing;
+            tblViewTransactions.Location = new Point(3, 142);
+            tblViewTransactions.Name = "tblViewTransactions";
+            tblViewTransactions.RowHeadersVisible = false;
+            tblViewTransactions.ScrollBars = ScrollBars.None;
+            tblViewTransactions.Size = new Size(750, 749);
+            tblViewTransactions.TabIndex = 47;
+            // 
             // txtTransactions_SearchBar
             // 
             txtTransactions_SearchBar.Font = new Font("Segoe UI", 9.75F);
@@ -1159,25 +1180,6 @@
             txtTransactions_SearchBar.Name = "txtTransactions_SearchBar";
             txtTransactions_SearchBar.Size = new Size(283, 25);
             txtTransactions_SearchBar.TabIndex = 46;
-            // 
-            // tblViewTransactions
-            // 
-            tblViewTransactions.AutoScroll = true;
-            tblViewTransactions.BackgroundImageLayout = ImageLayout.None;
-            tblViewTransactions.CellBorderStyle = TableLayoutPanelCellBorderStyle.Single;
-            tblViewTransactions.ColumnCount = 6;
-            tblViewTransactions.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 50F));
-            tblViewTransactions.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 146F));
-            tblViewTransactions.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 167F));
-            tblViewTransactions.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 165F));
-            tblViewTransactions.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 99F));
-            tblViewTransactions.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 50F));
-            tblViewTransactions.Location = new Point(3, 182);
-            tblViewTransactions.Name = "tblViewTransactions";
-            tblViewTransactions.RowCount = 1;
-            tblViewTransactions.RowStyles.Add(new RowStyle(SizeType.Absolute, 66F));
-            tblViewTransactions.Size = new Size(750, 708);
-            tblViewTransactions.TabIndex = 21;
             // 
             // cbTransaction_SearchBy
             // 
@@ -1260,7 +1262,7 @@
             // 
             lblViewDetails_RegularTax.Font = new Font("Segoe UI", 12F, FontStyle.Regular, GraphicsUnit.Point, 0);
             lblViewDetails_RegularTax.ForeColor = Color.White;
-            lblViewDetails_RegularTax.Location = new Point(796, 642);
+            lblViewDetails_RegularTax.Location = new Point(796, 640);
             lblViewDetails_RegularTax.Name = "lblViewDetails_RegularTax";
             lblViewDetails_RegularTax.Size = new Size(120, 23);
             lblViewDetails_RegularTax.TabIndex = 75;
@@ -1271,7 +1273,7 @@
             // 
             lblViewDetails_BusinessTax.Font = new Font("Segoe UI", 12F, FontStyle.Regular, GraphicsUnit.Point, 0);
             lblViewDetails_BusinessTax.ForeColor = Color.White;
-            lblViewDetails_BusinessTax.Location = new Point(796, 596);
+            lblViewDetails_BusinessTax.Location = new Point(796, 594);
             lblViewDetails_BusinessTax.Name = "lblViewDetails_BusinessTax";
             lblViewDetails_BusinessTax.Size = new Size(120, 23);
             lblViewDetails_BusinessTax.TabIndex = 74;
@@ -1282,7 +1284,7 @@
             // 
             lblViewDetails_PrivateTax.Font = new Font("Segoe UI", 12F, FontStyle.Regular, GraphicsUnit.Point, 0);
             lblViewDetails_PrivateTax.ForeColor = Color.White;
-            lblViewDetails_PrivateTax.Location = new Point(796, 553);
+            lblViewDetails_PrivateTax.Location = new Point(796, 551);
             lblViewDetails_PrivateTax.Name = "lblViewDetails_PrivateTax";
             lblViewDetails_PrivateTax.Size = new Size(120, 23);
             lblViewDetails_PrivateTax.TabIndex = 73;
@@ -1293,7 +1295,7 @@
             // 
             lblViewDetails_RegularInsurance.Font = new Font("Segoe UI", 12F, FontStyle.Regular, GraphicsUnit.Point, 0);
             lblViewDetails_RegularInsurance.ForeColor = Color.White;
-            lblViewDetails_RegularInsurance.Location = new Point(556, 643);
+            lblViewDetails_RegularInsurance.Location = new Point(556, 641);
             lblViewDetails_RegularInsurance.Name = "lblViewDetails_RegularInsurance";
             lblViewDetails_RegularInsurance.Size = new Size(203, 23);
             lblViewDetails_RegularInsurance.TabIndex = 72;
@@ -1304,7 +1306,7 @@
             // 
             lblViewDetails_BusinessInsurance.Font = new Font("Segoe UI", 12F, FontStyle.Regular, GraphicsUnit.Point, 0);
             lblViewDetails_BusinessInsurance.ForeColor = Color.White;
-            lblViewDetails_BusinessInsurance.Location = new Point(556, 597);
+            lblViewDetails_BusinessInsurance.Location = new Point(556, 595);
             lblViewDetails_BusinessInsurance.Name = "lblViewDetails_BusinessInsurance";
             lblViewDetails_BusinessInsurance.Size = new Size(203, 23);
             lblViewDetails_BusinessInsurance.TabIndex = 71;
@@ -1315,7 +1317,7 @@
             // 
             lblViewDetails_PrivateInsurance.Font = new Font("Segoe UI", 12F, FontStyle.Regular, GraphicsUnit.Point, 0);
             lblViewDetails_PrivateInsurance.ForeColor = Color.White;
-            lblViewDetails_PrivateInsurance.Location = new Point(556, 554);
+            lblViewDetails_PrivateInsurance.Location = new Point(556, 552);
             lblViewDetails_PrivateInsurance.Name = "lblViewDetails_PrivateInsurance";
             lblViewDetails_PrivateInsurance.Size = new Size(203, 23);
             lblViewDetails_PrivateInsurance.TabIndex = 70;
@@ -1460,6 +1462,7 @@
             btnViewDetails_BookRegular.Size = new Size(120, 34);
             btnViewDetails_BookRegular.TabIndex = 57;
             btnViewDetails_BookRegular.UseVisualStyleBackColor = false;
+            btnViewDetails_BookRegular.Click += btnViewDetails_BookRegular_Click;
             // 
             // btnViewDetails_BookBusiness
             // 
@@ -1476,6 +1479,7 @@
             btnViewDetails_BookBusiness.Size = new Size(120, 34);
             btnViewDetails_BookBusiness.TabIndex = 56;
             btnViewDetails_BookBusiness.UseVisualStyleBackColor = false;
+            btnViewDetails_BookBusiness.Click += btnViewDetails_BookBusiness_Click;
             // 
             // btnViewDetails_BookPrivate
             // 
@@ -1492,6 +1496,7 @@
             btnViewDetails_BookPrivate.Size = new Size(120, 34);
             btnViewDetails_BookPrivate.TabIndex = 55;
             btnViewDetails_BookPrivate.UseVisualStyleBackColor = false;
+            btnViewDetails_BookPrivate.Click += btnViewDetails_BookPrivate_Click;
             // 
             // imgViewDetails_RegularAvailability
             // 
@@ -1609,7 +1614,6 @@
             Controls.Add(navbtnViewBooking);
             Controls.Add(navbtnBbook);
             Controls.Add(navbtnHomepage);
-            Controls.Add(panel1);
             Controls.Add(panel9_DetailedFlightView);
             Controls.Add(panel8);
             Controls.Add(panel7);
@@ -1618,6 +1622,7 @@
             Controls.Add(panel4);
             Controls.Add(panel3);
             Controls.Add(panel2);
+            Controls.Add(panel1);
             FormBorderStyle = FormBorderStyle.None;
             Name = "Homepage";
             StartPosition = FormStartPosition.CenterScreen;
@@ -1646,16 +1651,21 @@
             ((System.ComponentModel.ISupportInitialize)imgMercLogo).EndInit();
             ((System.ComponentModel.ISupportInitialize)pictureBox1).EndInit();
             panel4.ResumeLayout(false);
+            pnlDevelopersPhotos.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)pictureBox5).EndInit();
             ((System.ComponentModel.ISupportInitialize)imgAboutUsPreset).EndInit();
             panel5.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)tblViewFlightSchedules).EndInit();
             ((System.ComponentModel.ISupportInitialize)imgPresets1).EndInit();
             panel6.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)pictureBox3).EndInit();
             ((System.ComponentModel.ISupportInitialize)imgbSlideshow).EndInit();
             panel7.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)tblViewBookings).EndInit();
             ((System.ComponentModel.ISupportInitialize)pictureBox4).EndInit();
             panel8.ResumeLayout(false);
             panel8.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)tblViewTransactions).EndInit();
             ((System.ComponentModel.ISupportInitialize)pictureBox8).EndInit();
             panel9_DetailedFlightView.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)dollarsign10).EndInit();
@@ -1738,25 +1748,21 @@
         private Button btnBook;
         private PictureBox imgMercLogo;
         private Panel panel4;
-        private Panel pnlDevelopersPhoto;
         private Panel panel5;
         private Panel panel6;
         private PictureBox pictureBox3;
         private PictureBox imgbSlideshow;
         private Button btnBook_HomePageHomePage;
-        private TableLayoutPanel tblFlightSchedules;
         private DateTimePicker dtpSearchScheduleDate;
         private ComboBox cbSearchSchedule_Destination;
         private ComboBox cbSearchSchedule_Origin;
         private Panel panel7;
-        private TableLayoutPanel tblViewBookings;
         private DateTimePicker dtpSearchBookingsDate;
         private ComboBox cbSearchBookings_Destination;
         private ComboBox cbSearchBookings_Origin;
         private PictureBox pictureBox4;
         private Panel panel8;
         private TextBox txtTransactions_SearchBar;
-        private TableLayoutPanel tblViewTransactions;
         private ComboBox cbTransaction_SearchBy;
         private PictureBox pictureBox8;
         private Panel panel9_DetailedFlightView;
@@ -1790,5 +1796,10 @@
         private ComboBox cbNumberofPassengers;
         private Panel grpClassType;
         private Panel grpTravelType;
+        private Panel pnlDevelopersPhotos;
+        private PictureBox pictureBox5;
+        private DataGridView tblViewTransactions;
+        private DataGridView tblViewBookings;
+        private DataGridView tblViewFlightSchedules;
     }
 }

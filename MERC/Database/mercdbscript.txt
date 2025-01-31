@@ -14,16 +14,19 @@ CREATE TABLE AccountInformation (
     FullName VARCHAR(100) NOT NULL
 ) ENGINE=InnoDB;
 
--- 2. Create the BookingInformation Table
+-- 2. Create the new BookingInformation table
 CREATE TABLE BookingInformation (
     BookingID INT AUTO_INCREMENT PRIMARY KEY,
-    ControlNumber VARCHAR(50) NOT NULL UNIQUE,
-    FlightType ENUM('Local', 'International') NOT NULL,
+    PassengerName VARCHAR(100) NOT NULL,
+    PassengerAge INT NOT NULL CHECK (PassengerAge > 0),
+    NumberOfPassengers INT NOT NULL CHECK (NumberOfPassengers > 0),
     TravelType ENUM('One-way', 'Round-trip') NOT NULL,
-    NumberOfPassengers INT NOT NULL,
-    TransactionFee DECIMAL(10,2) NOT NULL,
-    TotalCost DECIMAL(10,2) NOT NULL,
-    AccountID INT NOT NULL,
+    Origin VARCHAR(100) NOT NULL,
+    Destination VARCHAR(100) NOT NULL,
+    ClassType ENUM('Private', 'Business', 'Regular') NOT NULL,
+    DateCreated TIMESTAMP DEFAULT CURRENT_TIMESTAMP,  -- Auto-generate booking date
+    ControlNumber VARCHAR(50) NOT NULL UNIQUE,  -- Unique identifier for each booking
+    AccountID INT NOT NULL,  -- Associate booking with an account
     FOREIGN KEY (AccountID) REFERENCES AccountInformation(AccountID) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB;
 
@@ -154,4 +157,44 @@ INSERT INTO TransactionFeeInformation (ClassType, TransactionFeePerBooking)
 VALUES
     ('Private', 550.00),
     ('Business', 550.00),
-    ('Regular', 255.00);
+    ('Regular', 255.00);git
+
+
+
+
+
+
+
+
+
+
+    INSERT INTO FlightInformation 
+(FlightNumber, Origin, Destination, ClassType, PrivateFare, BusinessFare, RegularFare, BaggageFee, BoardingDate, BoardingTime, ArrivalDate, ArrivalTime, FlightCode)
+VALUES
+-- Manila to Batanes
+('FLT-BTN-MNL-P', 'Manila', 'Batanes', 'Private', 8000, 12500, 3500, 1250, '2025-02-01', '08:00:00', '2025-02-01', '09:30:00', 'BTN-MNL-P'),
+('FLT-BTN-MNL-B', 'Manila', 'Batanes', 'Business', 8000, 12500, 3500, 2850, '2025-02-01', '08:00:00', '2025-02-01', '09:30:00', 'BTN-MNL-B'),
+('FLT-BTN-MNL-R', 'Manila', 'Batanes', 'Regular', 8000, 12500, 3500, 950, '2025-02-01', '08:00:00', '2025-02-01', '09:30:00', 'BTN-MNL-R'),
+
+-- Manila to Japan
+('FLT-JPN-MNL-P', 'Manila', 'Japan', 'Private', 40450, 45355, 27800, 1250, '2025-02-02', '09:00:00', '2025-02-02', '17:00:00', 'JPN-MNL-P'),
+('FLT-JPN-MNL-B', 'Manila', 'Japan', 'Business', 40450, 45355, 27800, 2850, '2025-02-02', '09:00:00', '2025-02-02', '17:00:00', 'JPN-MNL-B'),
+('FLT-JPN-MNL-R', 'Manila', 'Japan', 'Regular', 40450, 45355, 27800, 950, '2025-02-02', '09:00:00', '2025-02-02', '17:00:00', 'JPN-MNL-R'),
+
+-- Manila to Vietnam
+('FLT-VTM-MNL-P', 'Manila', 'Vietnam', 'Private', 8505, 12345, 3200, 1250, '2025-02-02', '06:00:00', '2025-02-02', '10:30:00', 'VTM-MNL-P'),
+('FLT-VTM-MNL-B', 'Manila', 'Vietnam', 'Business', 8505, 12345, 3200, 2850, '2025-02-02', '06:00:00', '2025-02-02', '10:30:00', 'VTM-MNL-B'),
+('FLT-VTM-MNL-R', 'Manila', 'Vietnam', 'Regular', 8505, 12345, 3200, 950, '2025-02-02', '06:00:00', '2025-02-02', '10:30:00', 'VTM-MNL-R'),
+
+-- Manila to South Korea
+('FLT-STK-MNL-P', 'Manila', 'South Korea', 'Private', 27450, 37390, 12055, 1250, '2025-02-02', '16:00:00', '2025-02-02', '22:00:00', 'STK-MNL-P'),
+('FLT-STK-MNL-B', 'Manila', 'South Korea', 'Business', 27450, 37390, 12055, 2850, '2025-02-02', '16:00:00', '2025-02-02', '22:00:00', 'STK-MNL-B'),
+('FLT-STK-MNL-R', 'Manila', 'South Korea', 'Regular', 27450, 37390, 12055, 950, '2025-02-02', '16:00:00', '2025-02-02', '22:00:00', 'STK-MNL-R'),
+
+-- Manila to Palawan
+('FLT-PLWN-MNL-P', 'Manila', 'Palawan', 'Private', 9100, 10500, 3200, 1250, '2025-02-01', '10:00:00', '2025-02-01', '12:00:00', 'PLWN-MNL-P'),
+('FLT-PLWN-MNL-B', 'Manila', 'Palawan', 'Business', 9100, 10500, 3200, 2850, '2025-02-01', '10:00:00', '2025-02-01', '12:00:00', 'PLWN-MNL-B'),
+('FLT-PLWN-MNL-R', 'Manila', 'Palawan', 'Regular', 9100, 10500, 3200, 950, '2025-02-01', '10:00:00', '2025-02-01', '12:00:00', 'PLWN-MNL-R');
+
+
+

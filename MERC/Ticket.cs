@@ -13,10 +13,34 @@ namespace MERC
 {
     public partial class Ticket : BaseForm
     {
-        public Ticket()
+        public Ticket(
+    string flightCode, string classType, string origin, string destination,
+    string passengerName, string passengerAge, string numberOfPassengers,
+    string travelInsurance, string travelType,
+    string boardingDate, string boardingTime, string arrivalDate, string arrivalTime,
+    string bookingDate, string bookingTime, string controlNumber)
         {
             InitializeComponent();
+
+            // Set label values
+            lblTicketID.Text = controlNumber;
+            lblDestinationFromOrigin.Text = flightCode;
+            lblClassType.Text = classType;
+            lblOrigin.Text = origin;
+            lblDestination.Text = destination;
+            lblPassengerName.Text = passengerName; // Display formatted passenger name
+            lblAge.Text = passengerAge;
+            lblPassengers.Text = numberOfPassengers;
+            lblTravelInsurance.Text = travelInsurance;
+            lblTripType.Text = travelType;
+            lblBoardingDate.Text = boardingDate;
+            lblBoardingTime.Text = boardingTime;  // Ensure boarding time is separated
+            lblArrivalDate.Text = arrivalDate;
+            lblArrivalTime.Text = arrivalTime;  // Ensure arrival time is separated
+            lblBookingDate.Text = bookingDate;
+            lblBookingTime.Text = bookingTime;
         }
+
 
         private void lblOrigin_Click(object sender, EventArgs e)
         {

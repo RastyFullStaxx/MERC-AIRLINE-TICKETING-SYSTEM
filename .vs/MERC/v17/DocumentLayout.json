@@ -7,32 +7,12 @@
       "RelativeMoniker": "D:0:0:{15991942-EDB0-46D9-A781-EB7F9FE55A1B}|MERC\\MERC.csproj|solutionrelative:merc\\homepage.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{15991942-EDB0-46D9-A781-EB7F9FE55A1B}|MERC\\MERC.csproj|c:\\users\\msi\\source\\repos\\merc\\merc\\landingpage.designer.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{15991942-EDB0-46D9-A781-EB7F9FE55A1B}|MERC\\MERC.csproj|solutionrelative:merc\\landingpage.designer.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{15991942-EDB0-46D9-A781-EB7F9FE55A1B}|MERC\\MERC.csproj|c:\\users\\msi\\source\\repos\\merc\\merc\\landingpage.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}|Form",
-      "RelativeMoniker": "D:0:0:{15991942-EDB0-46D9-A781-EB7F9FE55A1B}|MERC\\MERC.csproj|solutionrelative:merc\\landingpage.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}|Form"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{15991942-EDB0-46D9-A781-EB7F9FE55A1B}|MERC\\MERC.csproj|c:\\users\\msi\\source\\repos\\merc\\merc\\homepage.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}|Form",
-      "RelativeMoniker": "D:0:0:{15991942-EDB0-46D9-A781-EB7F9FE55A1B}|MERC\\MERC.csproj|solutionrelative:merc\\homepage.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}|Form"
-    },
-    {
       "AbsoluteMoniker": "D:0:0:{15991942-EDB0-46D9-A781-EB7F9FE55A1B}|MERC\\MERC.csproj|c:\\users\\msi\\source\\repos\\merc\\merc\\homepage.designer.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{15991942-EDB0-46D9-A781-EB7F9FE55A1B}|MERC\\MERC.csproj|solutionrelative:merc\\homepage.designer.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{15991942-EDB0-46D9-A781-EB7F9FE55A1B}|MERC\\MERC.csproj|c:\\users\\msi\\source\\repos\\merc\\merc\\register_login.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{15991942-EDB0-46D9-A781-EB7F9FE55A1B}|MERC\\MERC.csproj|solutionrelative:merc\\register_login.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{15991942-EDB0-46D9-A781-EB7F9FE55A1B}|MERC\\MERC.csproj|c:\\users\\msi\\source\\repos\\merc\\merc\\landingpage.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{15991942-EDB0-46D9-A781-EB7F9FE55A1B}|MERC\\MERC.csproj|solutionrelative:merc\\landingpage.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{15991942-EDB0-46D9-A781-EB7F9FE55A1B}|MERC\\MERC.csproj|c:\\users\\msi\\source\\repos\\merc\\merc\\database\\mercdbscript.txt||{8B382828-6202-11D1-8870-0000F87579D2}",
-      "RelativeMoniker": "D:0:0:{15991942-EDB0-46D9-A781-EB7F9FE55A1B}|MERC\\MERC.csproj|solutionrelative:merc\\database\\mercdbscript.txt||{8B382828-6202-11D1-8870-0000F87579D2}"
+      "AbsoluteMoniker": "D:0:0:{15991942-EDB0-46D9-A781-EB7F9FE55A1B}|MERC\\MERC.csproj|c:\\users\\msi\\source\\repos\\merc\\merc\\homepage.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}|Form",
+      "RelativeMoniker": "D:0:0:{15991942-EDB0-46D9-A781-EB7F9FE55A1B}|MERC\\MERC.csproj|solutionrelative:merc\\homepage.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}|Form"
     }
   ],
   "DocumentGroupContainers": [
@@ -42,7 +22,7 @@
       "DocumentGroups": [
         {
           "DockedWidth": 200,
-          "SelectedChildIndex": 13,
+          "SelectedChildIndex": 10,
           "Children": [
             {
               "$type": "Bookmark",
@@ -82,53 +62,16 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 5,
-              "Title": "Register_LogIn.cs",
-              "DocumentMoniker": "C:\\Users\\MSI\\source\\repos\\MERC\\MERC\\Register_LogIn.cs",
-              "RelativeDocumentMoniker": "MERC\\Register_LogIn.cs",
-              "ToolTip": "C:\\Users\\MSI\\source\\repos\\MERC\\MERC\\Register_LogIn.cs",
-              "RelativeToolTip": "MERC\\Register_LogIn.cs",
-              "ViewState": "AQIAAFYAAAAAAAAAAADwv10AAAAqAAAA",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-01-28T23:48:22.178Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 2,
-              "Title": "LandingPage.cs [Design]",
-              "DocumentMoniker": "C:\\Users\\MSI\\source\\repos\\MERC\\MERC\\LandingPage.cs",
-              "RelativeDocumentMoniker": "MERC\\LandingPage.cs",
-              "ToolTip": "C:\\Users\\MSI\\source\\repos\\MERC\\MERC\\LandingPage.cs [Design]",
-              "RelativeToolTip": "MERC\\LandingPage.cs [Design]",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-01-28T23:46:46.332Z",
-              "EditorCaption": " [Design]"
-            },
-            {
-              "$type": "Document",
               "DocumentIndex": 1,
-              "Title": "LandingPage.Designer.cs",
-              "DocumentMoniker": "C:\\Users\\MSI\\source\\repos\\MERC\\MERC\\LandingPage.Designer.cs",
-              "RelativeDocumentMoniker": "MERC\\LandingPage.Designer.cs",
-              "ToolTip": "C:\\Users\\MSI\\source\\repos\\MERC\\MERC\\LandingPage.Designer.cs",
-              "RelativeToolTip": "MERC\\LandingPage.Designer.cs",
-              "ViewState": "AQIAAIUAAAAAAAAAAAAowIkAAABeAAAA",
+              "Title": "Homepage.Designer.cs",
+              "DocumentMoniker": "C:\\Users\\MSI\\source\\repos\\MERC\\MERC\\Homepage.Designer.cs",
+              "RelativeDocumentMoniker": "MERC\\Homepage.Designer.cs",
+              "ToolTip": "C:\\Users\\MSI\\source\\repos\\MERC\\MERC\\Homepage.Designer.cs",
+              "RelativeToolTip": "MERC\\Homepage.Designer.cs",
+              "ViewState": "AQIAAH8EAAAAAAAAAAASwJcEAAAoAAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-01-28T23:42:36.293Z",
+              "WhenOpened": "2025-01-30T23:06:35.835Z",
               "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 3,
-              "Title": "Homepage.cs [Design]",
-              "DocumentMoniker": "C:\\Users\\MSI\\source\\repos\\MERC\\MERC\\Homepage.cs",
-              "RelativeDocumentMoniker": "MERC\\Homepage.cs",
-              "ToolTip": "C:\\Users\\MSI\\source\\repos\\MERC\\MERC\\Homepage.cs [Design]*",
-              "RelativeToolTip": "MERC\\Homepage.cs [Design]*",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-01-28T21:04:44.22Z",
-              "EditorCaption": " [Design]"
             },
             {
               "$type": "Document",
@@ -136,51 +79,24 @@
               "Title": "Homepage.cs",
               "DocumentMoniker": "C:\\Users\\MSI\\source\\repos\\MERC\\MERC\\Homepage.cs",
               "RelativeDocumentMoniker": "MERC\\Homepage.cs",
-              "ToolTip": "C:\\Users\\MSI\\source\\repos\\MERC\\MERC\\Homepage.cs*",
-              "RelativeToolTip": "MERC\\Homepage.cs*",
-              "ViewState": "AQIAAMkBAAAAAAAAAADwvx0CAAAAAAAA",
+              "ToolTip": "C:\\Users\\MSI\\source\\repos\\MERC\\MERC\\Homepage.cs",
+              "RelativeToolTip": "MERC\\Homepage.cs",
+              "ViewState": "AQIAACgHAAAAAAAAAAAqwDYHAAAmAAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-01-28T21:04:48.009Z",
+              "WhenOpened": "2025-01-30T22:29:25.421Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 6,
-              "Title": "LandingPage.cs",
-              "DocumentMoniker": "C:\\Users\\MSI\\source\\repos\\MERC\\MERC\\LandingPage.cs",
-              "RelativeDocumentMoniker": "MERC\\LandingPage.cs",
-              "ToolTip": "C:\\Users\\MSI\\source\\repos\\MERC\\MERC\\LandingPage.cs",
-              "RelativeToolTip": "MERC\\LandingPage.cs",
-              "ViewState": "AQIAAAAAAAAAAAAAAAAAAAUAAAAyAAAA",
+              "DocumentIndex": 2,
+              "Title": "Homepage.cs [Design]",
+              "DocumentMoniker": "C:\\Users\\MSI\\source\\repos\\MERC\\MERC\\Homepage.cs",
+              "RelativeDocumentMoniker": "MERC\\Homepage.cs",
+              "ToolTip": "C:\\Users\\MSI\\source\\repos\\MERC\\MERC\\Homepage.cs [Design]",
+              "RelativeToolTip": "MERC\\Homepage.cs [Design]",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-01-28T23:40:20.362Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 4,
-              "Title": "Homepage.Designer.cs",
-              "DocumentMoniker": "C:\\Users\\MSI\\source\\repos\\MERC\\MERC\\Homepage.Designer.cs",
-              "RelativeDocumentMoniker": "MERC\\Homepage.Designer.cs",
-              "ToolTip": "C:\\Users\\MSI\\source\\repos\\MERC\\MERC\\Homepage.Designer.cs",
-              "RelativeToolTip": "MERC\\Homepage.Designer.cs",
-              "ViewState": "AQIAANEEAAAAAAAAAAAWwOgEAAAMAAAA",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-01-28T21:47:22.783Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 7,
-              "Title": "mercdbscript.txt",
-              "DocumentMoniker": "C:\\Users\\MSI\\source\\repos\\MERC\\MERC\\Database\\mercdbscript.txt",
-              "RelativeDocumentMoniker": "MERC\\Database\\mercdbscript.txt",
-              "ToolTip": "C:\\Users\\MSI\\source\\repos\\MERC\\MERC\\Database\\mercdbscript.txt",
-              "RelativeToolTip": "MERC\\Database\\mercdbscript.txt",
-              "ViewState": "AQIAAAAAAAAAAAAAAAAAAAYAAAAAAAAA",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003109|",
-              "WhenOpened": "2025-01-28T23:59:33.432Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-01-30T22:28:26.269Z",
+              "EditorCaption": " [Design]"
             }
           ]
         }

@@ -37,14 +37,22 @@ namespace MERC
         public string Email { get; private set; }
         public string PhoneNumber { get; private set; }
         public string FullName { get; private set; }
+        private string GeneratedControlNumber;  // Store control number
+
 
         // Database connection instance (readonly to ensure it's not reassigned)
         private readonly DatabaseConnection dbConnection = new DatabaseConnection();
 
         // Constructor to initialize the form with account details
-        public Homepage(int accountId, string username, string email, string phoneNumber, string fullName)
+        public Homepage(int accountId, string username, string email, string phoneNumber, string fullName, string controlNumber)
         {
             InitializeComponent();
+
+            // Load Data to History
+            LoadTransactions();
+            tblViewFlightSchedules.CellFormatting += tblViewFlightSchedules_CellFormatting;
+            tblViewFlightSchedules.CellClick += tblViewFlightSchedules_CellClick;
+
 
             // Assign the values to encapsulated properties
             this.AccountID = accountId;
@@ -52,6 +60,8 @@ namespace MERC
             this.Email = email;
             this.PhoneNumber = phoneNumber;
             this.FullName = fullName;
+            this.GeneratedControlNumber = controlNumber;
+
 
             // Initialize the database connection
             this.dbConnection = new DatabaseConnection();
@@ -60,11 +70,13 @@ namespace MERC
             cbOrigin.SelectedIndexChanged += cbOrigin_SelectedIndexChanged;
             cbDestination.SelectedIndexChanged += cbDestination_SelectedIndexChanged;
             cbNumberofPassengers.SelectedIndexChanged += cbNumberofPassengers_SelectedIndexChanged;
+            chkbTravelInsurance.CheckedChanged += chkbTravelInsurance_CheckedChanged;
 
             // Set pricing
             lblClassFare.Text = "0.00";
             lblTravelTax.Text = "0.00";
             lblTransactionFee.Text = "0.00";
+            lblTotalFare.Text = "0.00";
 
             // Attach event handleres
             foreach (RadioButton radio in grpTravelType.Controls.OfType<RadioButton>())
@@ -80,10 +92,9 @@ namespace MERC
 
         private void btnConfirmBooking_Click(object sender, EventArgs e)
         {
-            // Input validation
             try
             {
-                // 1. Retrieve and validate Name
+                // 1. Retrieve and validate Passenger Name
                 string fullName = txtName.Text.Trim();
                 if (string.IsNullOrEmpty(fullName))
                 {
@@ -140,8 +151,9 @@ namespace MERC
                 // 7. Retrieve Travel Insurance Option
                 bool hasTravelInsurance = chkbTravelInsurance.Checked;
 
-                // Fetch pricing data and calculate total cost
+                // **Pricing Calculation**
                 float totalClassFare = 0.0f, totalTravelTax = 0.0f, transactionFee = 0.0f, insuranceFee = 0.0f;
+                string flightCode = ""; // To store the fetched flight code
 
                 try
                 {
@@ -150,7 +162,7 @@ namespace MERC
                         connection.Open();
 
                         // Query to fetch fare from FlightInformation table
-                        string fareQuery = "SELECT PrivateFare, BusinessFare, RegularFare FROM FlightInformation " +
+                        string fareQuery = "SELECT FlightCode, PrivateFare, BusinessFare, RegularFare FROM FlightInformation " +
                                            "WHERE Origin = @Origin AND Destination = @Destination";
                         MySqlCommand fareCommand = new MySqlCommand(fareQuery, connection);
                         fareCommand.Parameters.AddWithValue("@Origin", origin);
@@ -160,6 +172,8 @@ namespace MERC
                         {
                             if (reader.Read())
                             {
+                                flightCode = reader.GetString("FlightCode"); // Fetch the flight code
+
                                 float farePerPerson = classType switch
                                 {
                                     "Private" => reader.GetFloat("PrivateFare"),
@@ -168,6 +182,11 @@ namespace MERC
                                     _ => 0.0f
                                 };
                                 totalClassFare = farePerPerson * numberOfPassengers;
+                            }
+                            else
+                            {
+                                ShowError(5, "No flight data found for the selected route.");
+                                return;
                             }
                         }
 
@@ -190,6 +209,9 @@ namespace MERC
                 // Calculate Total Cost
                 float totalCost = totalClassFare + totalTravelTax + transactionFee + insuranceFee;
 
+                // Generate unique Transaction Number (e.g., TXN-20240225-123456)
+                string transactionNumber = "TXN-" + DateTime.Now.ToString("yyyyMMdd-HHmmss");
+
                 // Insert booking into database
                 try
                 {
@@ -197,22 +219,26 @@ namespace MERC
                     {
                         connection.Open();
 
-                        // Generate a unique Control Number
-                        string controlNumber = Guid.NewGuid().ToString().Substring(0, 8).ToUpper();
+                        // Generate a unique Control Number and store it for later use
+                        this.GeneratedControlNumber = Guid.NewGuid().ToString().Substring(0, 8).ToUpper();
 
                         // Insert into BookingInformation table
-                        string insertBookingQuery = "INSERT INTO BookingInformation (ControlNumber, FlightType, TravelType, NumberOfPassengers, " +
-                                                    "TransactionFee, TotalCost, AccountID) " +
-                                                    "VALUES (@ControlNumber, @FlightType, @TravelType, @NumberOfPassengers, " +
-                                                    "@TransactionFee, @TotalCost, @AccountID)";
+                        string insertBookingQuery = "INSERT INTO BookingInformation (ControlNumber, TransactionNumber, PassengerName, PassengerAge, " +
+                                                    "NumberOfPassengers, TravelType, Origin, Destination, ClassType, BookingDate, FlightCode, AccountID) " +
+                                                    "VALUES (@ControlNumber, @TransactionNumber, @PassengerName, @PassengerAge, @NumberOfPassengers, " +
+                                                    "@TravelType, @Origin, @Destination, @ClassType, NOW(), @FlightCode, @AccountID)";
                         MySqlCommand bookingCommand = new MySqlCommand(insertBookingQuery, connection);
-                        bookingCommand.Parameters.AddWithValue("@ControlNumber", controlNumber);
-                        bookingCommand.Parameters.AddWithValue("@FlightType", origin == "Manila" || destination == "Manila" ? "Local" : "International");
-                        bookingCommand.Parameters.AddWithValue("@TravelType", travelType);
+                        bookingCommand.Parameters.AddWithValue("@ControlNumber", GeneratedControlNumber);
+                        bookingCommand.Parameters.AddWithValue("@TransactionNumber", transactionNumber);
+                        bookingCommand.Parameters.AddWithValue("@PassengerName", fullName);
+                        bookingCommand.Parameters.AddWithValue("@PassengerAge", age);
                         bookingCommand.Parameters.AddWithValue("@NumberOfPassengers", numberOfPassengers);
-                        bookingCommand.Parameters.AddWithValue("@TransactionFee", transactionFee);
-                        bookingCommand.Parameters.AddWithValue("@TotalCost", totalCost);
-                        bookingCommand.Parameters.AddWithValue("@AccountID", this.AccountID); // Assume currentAccountID is globally available
+                        bookingCommand.Parameters.AddWithValue("@TravelType", travelType);
+                        bookingCommand.Parameters.AddWithValue("@Origin", origin);
+                        bookingCommand.Parameters.AddWithValue("@Destination", destination);
+                        bookingCommand.Parameters.AddWithValue("@ClassType", classType);
+                        bookingCommand.Parameters.AddWithValue("@FlightCode", flightCode);
+                        bookingCommand.Parameters.AddWithValue("@AccountID", this.AccountID);
 
                         int rowsAffected = bookingCommand.ExecuteNonQuery();
                         if (rowsAffected > 0)
@@ -234,8 +260,45 @@ namespace MERC
             {
                 ShowError(7, $"An unexpected error occurred: {ex.Message}");
             }
+
+            // Hide booking panel and show confirmation panel
+            panel1.Visible = false;
+            panel2.Visible = true;
+
+            // Load details into confirmation panel
+            LoadBookingDetails();
         }
 
+
+
+        private void LoadBookingDetails()
+        {
+            try
+            {
+                // Assign values directly from user selections and labels
+                lblConfirm_PassengerName.Text = txtName.Text.Trim();
+                lblConfirm_PassengerAge.Text = txtAge.Text.Trim();
+                lblConfirm_TravelType.Text = grpTravelType.Controls.OfType<RadioButton>()
+                                             .FirstOrDefault(r => r.Checked)?.Text ?? "N/A";
+                lblConfirm_Origin.Text = cbOrigin.SelectedItem?.ToString() ?? "N/A";
+                lblConfirm_Destination.Text = cbDestination.SelectedItem?.ToString() ?? "N/A";
+                lblConfirm_ClassType.Text = grpClassType.Controls.OfType<RadioButton>()
+                                             .FirstOrDefault(r => r.Checked)?.Text ?? "N/A";
+
+                // Set the current date
+                lblConfirm_Date.Text = DateTime.Now.ToString("yyyy-MM-dd");
+
+                // Retrieve already calculated fare values
+                lblConfirm_ClassFare.Text = lblClassFare.Text;
+                lblConfirm_TransactionFee.Text = lblTransactionFee.Text;
+                lblConfirm_TravelTax.Text = lblTravelTax.Text;
+                lblConfirm_TotalCost.Text = lblTotalFare.Text; // Since lblTotalFare holds the final cost
+            }
+            catch (Exception ex)
+            {
+                ShowError(7, $"Error loading booking details: {ex.Message}");
+            }
+        }
 
 
         private void Booking1_Load(object sender, EventArgs e)
@@ -256,36 +319,95 @@ namespace MERC
 
         }
 
-        private void button2_Click(object sender, EventArgs e)
-        {
-            // implement clearance of user inputs upon click
-
-            Homepage homepage = new Homepage(AccountID, Username, Email, PhoneNumber, FullName);
-            homepage.Show();
-            this.Hide();
-        }
-
+        // Confirmation Panel to Ticket.cs
         private void lblConfirm_ConfirmBooking_Click(object sender, EventArgs e)
         {
-            Ticket ticket = new Ticket();
+            // Ensure Control Number is available
+            if (string.IsNullOrEmpty(this.GeneratedControlNumber))
+            {
+                ShowError(7, "Control number is missing.");
+                return;
+            }
+
+            // Retrieve other booking details from UI
+            string flightCode = lblConfirm_Origin.Text + "-" + lblConfirm_Destination.Text;
+            string classType = lblConfirm_ClassType.Text;
+            string origin = lblConfirm_Origin.Text;
+            string destination = lblConfirm_Destination.Text;
+            string passengerName = FormatPassengerName(lblConfirm_PassengerName.Text); // Format name correctly
+            string passengerAge = lblConfirm_PassengerAge.Text;
+            string numberOfPassengers = cbNumberofPassengers.SelectedItem?.ToString() ?? "1";
+            string travelInsurance = chkbTravelInsurance.Checked ? "YES" : "NO";
+            string travelType = lblConfirm_TravelType.Text;
+
+            // Initialize boarding and arrival details
+            string boardingDate = "", boardingTime = "";
+            string arrivalDate = "", arrivalTime = "";
+
+            // Retrieve flight schedule from database
+            try
+            {
+                using (var connection = dbConnection.GetConnection())
+                {
+                    connection.Open();
+
+                    string query = "SELECT BoardingDate, BoardingTime, ArrivalDate, ArrivalTime, FlightCode FROM FlightInformation " +
+                                   "WHERE Origin = @Origin AND Destination = @Destination";
+
+                    MySqlCommand command = new MySqlCommand(query, connection);
+                    command.Parameters.AddWithValue("@Origin", origin);
+                    command.Parameters.AddWithValue("@Destination", destination);
+
+                    using (var reader = command.ExecuteReader())
+                    {
+                        if (reader.Read())
+                        {
+                            boardingDate = DateTime.Parse(reader["BoardingDate"].ToString()).ToString("yyyy-MM-dd");
+                            boardingTime = DateTime.Parse(reader["BoardingTime"].ToString()).ToString("HH:mm:ss");
+                            arrivalDate = DateTime.Parse(reader["ArrivalDate"].ToString()).ToString("yyyy-MM-dd");
+                            arrivalTime = DateTime.Parse(reader["ArrivalTime"].ToString()).ToString("HH:mm:ss");
+                            flightCode = reader["FlightCode"].ToString(); // Ensure correct FlightCode format
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                ShowError(7, $"Database error: {ex.Message}");
+                return;
+            }
+
+            // Get the current booking date and time
+            string bookingDate = DateTime.Now.ToString("yyyy-MM-dd");
+            string bookingTime = DateTime.Now.ToString("HH:mm:ss");
+
+            // Open the Ticket form and pass the details
+            Ticket ticket = new Ticket(flightCode, classType, origin, destination,
+                passengerName, passengerAge, numberOfPassengers, travelInsurance, travelType,
+                boardingDate, boardingTime, arrivalDate, arrivalTime, bookingDate, bookingTime, this.GeneratedControlNumber);
+
             ticket.Show();
             this.Hide();
         }
 
-        private void btnEditBooking_Click_1(object sender, EventArgs e)
+
+        private string FormatPassengerName(string fullName)
         {
-            panel2.Visible = false;
-            panel1.Visible = true;
+            string[] nameParts = fullName.Split(' '); // Split name by spaces
+
+            if (nameParts.Length < 2)
+            {
+                return fullName; // Return as-is if only one name exists
+            }
+
+            string surname = nameParts[nameParts.Length - 1]; // Last part is the surname
+            string firstName = nameParts[0]; // First part is the first name
+            string middleInitial = nameParts.Length > 2 ? nameParts[1][0].ToString().ToUpper() : ""; // Get middle initial (if exists)
+
+            return $"{surname},\n{firstName}\n{middleInitial}"; // Display on separate lines
         }
 
-        private void button1_Click(object sender, EventArgs e)
-        {
-            // implement clearance of user inputs upon click
 
-            Homepage homepage = new Homepage(AccountID, Username, Email, PhoneNumber, FullName);
-            homepage.Show();
-            this.Hide();
-        }
 
         private void navbtnHomepage_Click(object sender, EventArgs e)
         {
@@ -353,6 +475,7 @@ namespace MERC
 
         private void navbtnFlighSchedule_Click(object sender, EventArgs e)
         {
+            LoadFlightSchedules();
             panel1.Visible = false;
             panel2.Visible = false;
             panel3.Visible = false;
@@ -375,6 +498,7 @@ namespace MERC
         private void navbtnViewBooking_Click(object sender, EventArgs e)
         {
 
+
             panel1.Visible = false;
             panel2.Visible = false;
             panel3.Visible = false;
@@ -392,6 +516,8 @@ namespace MERC
             navbtnTransactions.Image = Image.FromFile("C:\\Users\\MSI\\source\\repos\\MERC\\MERC\\assets\\navbtnTransactions_Inactive.png");
             navbtnAboutUs.Image = Image.FromFile("C:\\Users\\MSI\\source\\repos\\MERC\\MERC\\assets\\navbtnAboutUs_Inactive.png");
             navbtnViewBooking.Image = Image.FromFile("C:\\Users\\MSI\\source\\repos\\MERC\\MERC\\assets\\navbtnViewBooking_Active.png");
+
+            LoadActiveBookings();
         }
 
         private void navbtnTransactions_Click(object sender, EventArgs e)
@@ -414,6 +540,8 @@ namespace MERC
             navbtnTransactions.Image = Image.FromFile("C:\\Users\\MSI\\source\\repos\\MERC\\MERC\\assets\\navbtnTransactions_Active.png");
             navbtnAboutUs.Image = Image.FromFile("C:\\Users\\MSI\\source\\repos\\MERC\\MERC\\assets\\navbtnAboutUs_Inactive.png");
             navbtnViewBooking.Image = Image.FromFile("C:\\Users\\MSI\\source\\repos\\MERC\\MERC\\assets\\navbtnViewBooking_Inactive.png");
+
+            LoadTransactions();
         }
 
         private void btnBook_HomePageHomePage_Click(object sender, EventArgs e)
@@ -439,7 +567,24 @@ namespace MERC
 
         private void lblViewDetails_Return_Click(object sender, EventArgs e)
         {
+            LoadFlightSchedules();
+            panel1.Visible = false;
+            panel2.Visible = false;
+            panel3.Visible = false;
+            panel4.Visible = false;
+            panel5.Visible = true;
+            panel6.Visible = false;
+            panel7.Visible = false;
+            panel8.Visible = false;
             panel9_DetailedFlightView.Visible = false;
+
+            navbtnBbook.Image = Image.FromFile("C:\\Users\\MSI\\source\\repos\\MERC\\MERC\\assets\\navbtnBook_Inactive.png");
+            navbtnAboutUs.Image = Image.FromFile("C:\\Users\\MSI\\source\\repos\\MERC\\MERC\\assets\\navbtnAboutUs_Inactive.png");
+            navbtnHomepage.Image = Image.FromFile("C:\\Users\\MSI\\source\\repos\\MERC\\MERC\\assets\\navbtnHomepage_Inactive.png");
+            navbtnFlighSchedule.Image = Image.FromFile("C:\\Users\\MSI\\source\\repos\\MERC\\MERC\\assets\\navbtnFlightSchedule_Active.png");
+            navbtnTransactions.Image = Image.FromFile("C:\\Users\\MSI\\source\\repos\\MERC\\MERC\\assets\\navbtnTransactions_Inactive.png");
+            navbtnAboutUs.Image = Image.FromFile("C:\\Users\\MSI\\source\\repos\\MERC\\MERC\\assets\\navbtnAboutUs_Inactive.png");
+            navbtnViewBooking.Image = Image.FromFile("C:\\Users\\MSI\\source\\repos\\MERC\\MERC\\assets\\navbtnViewBooking_Inactive.png");
         }
 
         private bool isUpdating = false; // Flag to prevent recursive updates
@@ -606,54 +751,6 @@ namespace MERC
         }
 
 
-        private float GetFareFromRoute(string origin, string destination, string classType)
-        {
-            // Example pricing from your documentation
-            var routeFares = new Dictionary<(string, string, string), float>
-    {
-        { ("Manila", "Batanes", "Private"), 8000.0f },
-        { ("Manila", "Batanes", "Business"), 12500.0f },
-        { ("Manila", "Batanes", "Regular"), 3500.0f },
-
-        { ("Batanes", "Manila", "Private"), 9800.0f },
-        { ("Batanes", "Manila", "Business"), 12950.0f },
-        { ("Batanes", "Manila", "Regular"), 3900.0f },
-
-        { ("Manila", "Palawan", "Private"), 9100.0f },
-        { ("Manila", "Palawan", "Business"), 10500.0f },
-        { ("Manila", "Palawan", "Regular"), 3200.0f },
-
-        { ("Palawan", "Manila", "Private"), 9850.0f },
-        { ("Palawan", "Manila", "Business"), 10975.0f },
-        { ("Palawan", "Manila", "Regular"), 3575.0f },
-
-        { ("Manila", "South Korea", "Business"), 37490.0f },
-        { ("Manila", "South Korea", "Regular"), 12055.0f },
-
-        { ("South Korea", "Manila", "Business"), 39650.0f },
-        { ("South Korea", "Manila", "Regular"), 13100.0f },
-
-        { ("Manila", "Japan", "Private"), 40450.0f },
-        { ("Manila", "Japan", "Business"), 45355.0f },
-        { ("Manila", "Japan", "Regular"), 27800.0f },
-
-        { ("Japan", "Manila", "Private"), 43855.0f },
-        { ("Japan", "Manila", "Business"), 49780.0f },
-        { ("Japan", "Manila", "Regular"), 29400.0f },
-
-        { ("Manila", "Vietnam", "Private"), 8505.0f },
-        { ("Manila", "Vietnam", "Business"), 12345.0f },
-        { ("Manila", "Vietnam", "Regular"), 3200.0f },
-
-        { ("Vietnam", "Manila", "Private"), 14300.0f },
-        { ("Vietnam", "Manila", "Business"), 16320.0f },
-        { ("Vietnam", "Manila", "Regular"), 4600.0f }
-    };
-
-            return routeFares.TryGetValue((origin, destination, classType), out float fare) ? fare : 0.0f;
-        }
-
-
         private void ShowError(int errorCode, string description)
         {
             ReportError errorForm = new ReportError();
@@ -793,11 +890,12 @@ namespace MERC
                 return; // Exit if no valid selection is made
             }
 
-            // Get current selected values for Origin, Destination, and Class Type
+            // Get current selected values
             string origin = cbOrigin.SelectedItem?.ToString();
             string destination = cbDestination.SelectedItem?.ToString();
             string classType = grpClassType.Controls.OfType<RadioButton>()
                                    .FirstOrDefault(r => r.Checked)?.Text;
+            bool hasInsurance = chkbTravelInsurance.Checked; // Check if insurance is selected
 
             // Validate selections
             if (string.IsNullOrEmpty(origin) || string.IsNullOrEmpty(destination) || string.IsNullOrEmpty(classType))
@@ -806,7 +904,6 @@ namespace MERC
                 return;
             }
 
-            // Query database to get pricing details
             try
             {
                 using (var connection = dbConnection.GetConnection())
@@ -832,18 +929,22 @@ namespace MERC
                                 _ => 0.0f
                             };
 
-                            // Fetch travel tax and transaction fee for the class type
                             float travelTaxPerPerson = GetTravelTaxFromDB(classType);
                             float transactionFee = GetTransactionFeeFromDB(classType);
+                            float insuranceFeePerPerson = hasInsurance ? GetInsuranceFeeFromDB(classType) : 0.0f;
 
                             // Calculate totals
                             float totalClassFare = farePerPerson * numberOfPassengers;
                             float totalTravelTax = travelTaxPerPerson * numberOfPassengers;
+                            float totalInsuranceFee = insuranceFeePerPerson * numberOfPassengers;
+                            float totalFare = totalClassFare + totalTravelTax + transactionFee + totalInsuranceFee;
 
-                            // Update the labels
+                            // Update UI Labels
                             lblClassFare.Text = totalClassFare.ToString("0.00");
                             lblTravelTax.Text = totalTravelTax.ToString("0.00");
                             lblTransactionFee.Text = transactionFee.ToString("0.00");
+                            //lblInsuranceFee.Text = totalInsuranceFee.ToString("0.00"); // New
+                            //lblTotalFare.Text = totalFare.ToString("0.00"); // New
                         }
                         else
                         {
@@ -856,7 +957,9 @@ namespace MERC
             {
                 ShowError(7, $"Database error: {ex.Message}");
             }
+            UpdateTotalFare();
         }
+
 
 
         private float GetFarePerPerson(string classType)
@@ -954,6 +1057,7 @@ namespace MERC
             string travelType = grpTravelType.Controls.OfType<RadioButton>()
                                     .FirstOrDefault(r => r.Checked)?.Text;
             int numberOfPassengers = previousNumberOfPassengers;
+            bool hasInsurance = chkbTravelInsurance.Checked; // Check if insurance is selected
 
             if (string.IsNullOrEmpty(origin) || string.IsNullOrEmpty(destination) || string.IsNullOrEmpty(travelType))
             {
@@ -988,21 +1092,27 @@ namespace MERC
 
                             float travelTaxPerPerson = GetTravelTaxFromDB(classType);
                             float transactionFee = GetTransactionFeeFromDB(classType);
+                            float insuranceFeePerPerson = hasInsurance ? GetInsuranceFeeFromDB(classType) : 0.0f;
 
                             // Compute total fares
                             float totalClassFare = farePerPerson * numberOfPassengers;
                             float totalTravelTax = travelTaxPerPerson * numberOfPassengers;
+                            float totalInsuranceFee = insuranceFeePerPerson * numberOfPassengers;
+                            float totalFare = totalClassFare + totalTravelTax + transactionFee + totalInsuranceFee;
 
                             // Apply round-trip adjustment
                             if (travelType == "Round-trip")
                             {
                                 totalClassFare *= 2;
+                                totalFare *= 2; // Round-trip affects all fare components
                             }
 
                             // Update labels
                             lblClassFare.Text = totalClassFare.ToString("0.00");
                             lblTravelTax.Text = totalTravelTax.ToString("0.00");
                             lblTransactionFee.Text = transactionFee.ToString("0.00");
+                            //lblInsuranceFee.Text = totalInsuranceFee.ToString("0.00"); // New
+                            //lblTotalFare.Text = totalFare.ToString("0.00"); // New
                         }
                         else
                         {
@@ -1015,9 +1125,766 @@ namespace MERC
             {
                 ShowError(7, $"Database error: {ex.Message}");
             }
+            UpdateTotalFare();
+        }
+
+
+        private int GetSelectedNumberOfPassengers()
+        {
+            if (int.TryParse(cbNumberofPassengers.SelectedItem?.ToString(), out int numberOfPassengers))
+            {
+                return numberOfPassengers;
+            }
+            return 1; // Default to 1 if not selected
+        }
+
+        private void UpdateTotalFare(float insuranceFee = 0.0f)
+        {
+            try
+            {
+                // Parse values from labels (default to 0 if empty or invalid)
+                float classFare = float.TryParse(lblClassFare.Text, out float cFare) ? cFare : 0.0f;
+                float transactionFee = float.TryParse(lblTransactionFee.Text, out float tFee) ? tFee : 0.0f;
+                float travelTax = float.TryParse(lblTravelTax.Text, out float tTax) ? tTax : 0.0f;
+
+                // Compute total fare, adding the dynamically calculated insurance fee
+                float totalFare = classFare + transactionFee + travelTax + insuranceFee;
+
+                // Update lblTotalFare
+                lblTotalFare.Text = totalFare.ToString("0.00");
+            }
+            catch (Exception ex)
+            {
+                ShowError(7, $"Error calculating total fare: {ex.Message}");
+            }
         }
 
 
 
-    }
+
+        private void chkbTravelInsurance_CheckedChanged(object sender, EventArgs e)
+        {
+            // Get the selected class type
+            string classType = grpClassType.Controls.OfType<RadioButton>()
+                                   .FirstOrDefault(r => r.Checked)?.Text;
+            if (string.IsNullOrEmpty(classType)) return;
+
+            // Get the selected number of passengers
+            int numberOfPassengers = previousNumberOfPassengers > 0 ? previousNumberOfPassengers : 1;
+
+            // Fetch insurance fee from the database (returns 0 if unchecked)
+            float insuranceFeePerPerson = chkbTravelInsurance.Checked ? GetInsuranceFeeFromDB(classType) : 0.0f;
+
+            // Compute total insurance fee
+            float totalInsuranceFee = insuranceFeePerPerson * numberOfPassengers;
+
+            // Update total fare dynamically
+            UpdateTotalFare(totalInsuranceFee);
+        }
+
+        private void pictureBox7_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void lblConfirm_CancelBooking_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                // Ensure a booking exists before attempting deletion
+                if (string.IsNullOrEmpty(this.GeneratedControlNumber))
+                {
+                    ShowError(7, "No booking found to cancel.");
+                    return;
+                }
+
+                using (var connection = dbConnection.GetConnection())
+                {
+                    connection.Open();
+
+                    // Delete the booking from the database using ControlNumber
+                    string deleteQuery = "DELETE FROM BookingInformation WHERE ControlNumber = @ControlNumber";
+                    MySqlCommand deleteCommand = new MySqlCommand(deleteQuery, connection);
+                    deleteCommand.Parameters.AddWithValue("@ControlNumber", this.GeneratedControlNumber);
+
+                    int rowsAffected = deleteCommand.ExecuteNonQuery();
+
+                    if (rowsAffected > 0)
+                    {
+                        MessageBox.Show("Booking has been canceled successfully.", "Cancel Booking", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    }
+                    else
+                    {
+                        ShowError(7, "No matching booking found to cancel.");
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                ShowError(7, $"Database error: {ex.Message}");
+                return;
+            }
+
+            // Clear all input fields
+            txtName.Text = "";
+            txtAge.Text = "";
+            cbOrigin.SelectedIndex = -1;
+            cbDestination.SelectedIndex = -1;
+            cbNumberofPassengers.SelectedIndex = -1;
+            foreach (var rb in grpTravelType.Controls.OfType<RadioButton>()) rb.Checked = false;
+            foreach (var rb in grpClassType.Controls.OfType<RadioButton>()) rb.Checked = false;
+            chkbTravelInsurance.Checked = false;
+            lblClassFare.Text = "0.00";
+            lblTransactionFee.Text = "0.00";
+            lblTravelTax.Text = "0.00";
+            lblTotalFare.Text = "0.00";
+
+            // Navigate back to Landing Page
+            LandingPage landingpage = new LandingPage(AccountID, Username, Email, PhoneNumber, FullName);
+            landingpage.Show();
+            this.Hide();
+        }
+
+
+        private void btnEditBooking_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                // Ensure that a valid booking exists before attempting deletion
+                if (string.IsNullOrEmpty(this.GeneratedControlNumber))
+                {
+                    ShowError(7, "No booking found to edit.");
+                    return;
+                }
+
+                using (var connection = dbConnection.GetConnection())
+                {
+                    connection.Open();
+
+                    // Delete the booking from the database using ControlNumber
+                    string deleteQuery = "DELETE FROM BookingInformation WHERE ControlNumber = @ControlNumber";
+                    MySqlCommand deleteCommand = new MySqlCommand(deleteQuery, connection);
+                    deleteCommand.Parameters.AddWithValue("@ControlNumber", this.GeneratedControlNumber);
+
+                    int rowsAffected = deleteCommand.ExecuteNonQuery();
+
+                    if (rowsAffected > 0)
+                    {
+                        //MessageBox.Show("Booking has been removed. You can now edit your details.", "Edit Booking", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    }
+                    else
+                    {
+                        ShowError(7, "No matching booking found to edit.");
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                ShowError(7, $"Database error: {ex.Message}");
+                return;
+            }
+
+            // Switch back to the input panel while keeping the fields unchanged
+            panel2.Visible = false; // Hide confirmation panel
+            panel1.Visible = true;  // Show input panel
+        }
+
+        private void LoadTransactions()
+        {
+            try
+            {
+                using (var connection = dbConnection.GetConnection())
+                {
+                    connection.Open();
+
+                    string query = @"SELECT 
+                                TransactionNumber AS 'Transaction ID',
+                                PassengerName AS 'Passenger Name',
+                                Origin AS 'Origin',
+                                Destination AS 'Destination',
+                                ClassType AS 'Class Type',
+                                BookingDate AS 'Booking Date'
+                            FROM BookingInformation 
+                            WHERE AccountID = @AccountID";
+
+                    MySqlCommand command = new MySqlCommand(query, connection);
+                    command.Parameters.AddWithValue("@AccountID", this.AccountID);
+
+                    using (var reader = command.ExecuteReader())
+                    {
+                        DataTable dt = new DataTable();
+                        dt.Load(reader);
+
+                        // Debugging: Check if rows exist
+                        Console.WriteLine($"Rows Retrieved: {dt.Rows.Count}");
+
+                        // Bind to DataGridView
+                        tblViewTransactions.DataSource = dt;
+
+                        // Fix column headers for user-friendly display
+                        tblViewTransactions.Columns["Transaction ID"].HeaderText = "Transaction Number";
+                        tblViewTransactions.Columns["Passenger Name"].HeaderText = "Passenger Name";
+                        tblViewTransactions.Columns["Origin"].HeaderText = "Origin";
+                        tblViewTransactions.Columns["Destination"].HeaderText = "Destination";
+                        tblViewTransactions.Columns["Class Type"].HeaderText = "Class Type";
+                        tblViewTransactions.Columns["Booking Date"].HeaderText = "Booking Date";
+
+                        // Adjust column width to fit content
+                        tblViewTransactions.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
+                        tblViewTransactions.AutoSizeRowsMode = DataGridViewAutoSizeRowsMode.AllCells;
+                        tblViewTransactions.RowHeadersVisible = false;
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                ShowError(7, $"Database error while fetching transactions: {ex.Message}");
+            }
+        }
+
+
+        private void LoadActiveBookings()
+        {
+            try
+            {
+                using (var connection = dbConnection.GetConnection())
+                {
+                    connection.Open();
+                    string query = @"SELECT 
+                        b.ControlNumber AS 'Transaction Number',
+                        f.FlightNumber AS 'Flight Number',
+                        f.Origin AS 'Origin',
+                        f.Destination AS 'Destination',
+                        f.BoardingDate AS 'Departure Date',
+                        f.BoardingTime AS 'Departure Time',
+                        f.ArrivalDate AS 'Arrival Date',
+                        f.ArrivalTime AS 'Arrival Time'
+                    FROM BookingInformation b
+                    JOIN FlightInformation f ON b.FlightCode = f.FlightCode
+                    WHERE b.AccountID = @AccountID
+                    AND f.BoardingDate >= CURDATE()";
+
+                    MySqlCommand command = new MySqlCommand(query, connection);
+                    command.Parameters.AddWithValue("@AccountID", this.AccountID);
+
+                    MySqlDataAdapter adapter = new MySqlDataAdapter(command);
+                    DataTable dataTable = new DataTable();
+                    adapter.Fill(dataTable);
+
+                    tblViewBookings.DataSource = dataTable;
+
+                    // Ensure column names are user-friendly
+                    tblViewBookings.Columns["Transaction Number"].HeaderText = "Transaction Number";
+                    tblViewBookings.Columns["Flight Number"].HeaderText = "Flight Number";
+                    tblViewBookings.Columns["Origin"].HeaderText = "Origin";
+                    tblViewBookings.Columns["Destination"].HeaderText = "Destination";
+                    tblViewBookings.Columns["Departure Date"].HeaderText = "Departure Date";
+                    tblViewBookings.Columns["Departure Time"].HeaderText = "Departure Time";
+                    tblViewBookings.Columns["Arrival Date"].HeaderText = "Arrival Date";
+                    tblViewBookings.Columns["Arrival Time"].HeaderText = "Arrival Time";
+
+                    // Resize columns to fit the DataGridView properly
+                    tblViewBookings.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
+                    tblViewBookings.AutoSizeRowsMode = DataGridViewAutoSizeRowsMode.AllCells;
+                    tblViewBookings.RowHeadersVisible = false;
+                }
+            }
+            catch (Exception ex)
+            {
+                ShowError(7, $"Database error: {ex.Message}");
+            }
+        }
+
+
+
+        private void LoadFlightSchedules()
+        {
+            try
+            {
+                using (var connection = dbConnection.GetConnection())
+                {
+                    connection.Open();
+                    string query = @"
+        SELECT 
+            f.FlightNumber AS 'Flight Number',
+            f.Origin AS 'Origin',
+            f.Destination AS 'Destination',
+            f.ClassType AS 'Class Type',
+            f.BoardingDate AS 'Departure Date',
+            f.ArrivalDate AS 'Arrival Date',
+            f.BoardingTime AS 'Departure Time',
+            f.ArrivalTime AS 'Arrival Time',
+            CASE 
+                WHEN (a.MaxCapacity - COALESCE((SELECT SUM(b.NumberOfPassengers) 
+                                               FROM BookingInformation b 
+                                               WHERE b.FlightCode = f.FlightCode 
+                                               AND b.ClassType = f.ClassType), 0)) > 0 
+                THEN 'Available' ELSE 'Unavailable' 
+            END AS 'Class Availability'
+        FROM FlightInformation f
+        JOIN AirplaneInformation a ON f.ClassType = a.Type
+        GROUP BY f.FlightNumber, f.Origin, f.Destination, f.ClassType, 
+                 f.BoardingDate, f.ArrivalDate, f.BoardingTime, f.ArrivalTime, a.MaxCapacity";
+
+                    MySqlCommand command = new MySqlCommand(query, connection);
+                    MySqlDataAdapter adapter = new MySqlDataAdapter(command);
+                    DataTable dataTable = new DataTable();
+                    adapter.Fill(dataTable);
+
+                    tblViewFlightSchedules.DataSource = dataTable;
+
+                    // ✅ Set proper column headers for UI clarity
+                    tblViewFlightSchedules.Columns["Flight Number"].HeaderText = "Flight No.";
+                    tblViewFlightSchedules.Columns["Origin"].HeaderText = "Origin";
+                    tblViewFlightSchedules.Columns["Destination"].HeaderText = "Destination";
+                    tblViewFlightSchedules.Columns["Class Type"].HeaderText = "Class";
+                    tblViewFlightSchedules.Columns["Departure Date"].HeaderText = "Departure Date";
+                    tblViewFlightSchedules.Columns["Arrival Date"].HeaderText = "Arrival Date";
+                    tblViewFlightSchedules.Columns["Departure Time"].HeaderText = "Departure Time";
+                    tblViewFlightSchedules.Columns["Arrival Time"].HeaderText = "Arrival Time";
+                    tblViewFlightSchedules.Columns["Class Availability"].HeaderText = "Availability";
+
+                    // ✅ Format colors dynamically with null handling
+                    foreach (DataGridViewRow row in tblViewFlightSchedules.Rows)
+                    {
+                        if (row.Cells["Class Availability"].Value != null && !string.IsNullOrEmpty(row.Cells["Class Availability"].Value.ToString()))
+                        {
+                            string availability = row.Cells["Class Availability"].Value.ToString(); // ✅ Fix: Use correct column alias
+                            if (availability == "Available")
+                            {
+                                row.Cells["Class Availability"].Style.ForeColor = Color.Green;
+                                row.Cells["Class Availability"].Style.Font = new Font(tblViewFlightSchedules.Font, FontStyle.Bold);
+                            }
+                            else
+                            {
+                                row.Cells["Class Availability"].Style.ForeColor = Color.Red;
+                                row.Cells["Class Availability"].Style.Font = new Font(tblViewFlightSchedules.Font, FontStyle.Bold);
+                            }
+                        }
+                    }
+
+
+                    // ✅ Resize columns for better fit
+                    tblViewFlightSchedules.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
+                    tblViewFlightSchedules.AutoSizeRowsMode = DataGridViewAutoSizeRowsMode.AllCells;
+                    tblViewFlightSchedules.RowHeadersVisible = false;
+                }
+            }
+            catch (Exception ex)
+            {
+                ShowError(7, $"Database error while fetching flight schedules: {ex.Message}");
+            }
+        }
+
+
+
+
+        private void ColorCodeClassAvailability()
+        {
+            foreach (DataGridViewRow row in tblViewFlightSchedules.Rows)
+            {
+                if (row.Cells["Class Availability"].Value != null)
+                {
+                    string availability = row.Cells["Class Availability"].Value.ToString();
+
+                    if (availability == "Available")
+                    {
+                        row.Cells["Class Availability"].Style.ForeColor = Color.Green; // ✅ Green
+                        row.Cells["Class Availability"].Style.Font = new Font(tblViewFlightSchedules.Font, FontStyle.Bold);
+                    }
+                    else if (availability == "Unavailable")
+                    {
+                        row.Cells["Class Availability"].Style.ForeColor = Color.Red; // ❌ Red
+                        row.Cells["Class Availability"].Style.Font = new Font(tblViewFlightSchedules.Font, FontStyle.Bold);
+                    }
+                }
+            }
+        }
+
+        private void tblViewFlightSchedules_CellFormatting(object sender, DataGridViewCellFormattingEventArgs e)
+        {
+            // Ensure we're formatting the correct column
+            if (tblViewFlightSchedules.Columns[e.ColumnIndex].Name == "Class Availability")
+            {
+                if (e.Value != null)
+                {
+                    string availability = e.Value.ToString();
+                    if (availability == "Available")
+                    {
+                        e.CellStyle.ForeColor = Color.Green;  // ✅ Green for Available
+                        e.CellStyle.Font = new Font(tblViewFlightSchedules.Font, FontStyle.Bold);
+                    }
+                    else if (availability == "Unavailable")
+                    {
+                        e.CellStyle.ForeColor = Color.Red;  // ❌ Red for Unavailable
+                        e.CellStyle.Font = new Font(tblViewFlightSchedules.Font, FontStyle.Bold);
+                    }
+                }
+            }
+        }
+
+
+        private void tblViewFlightSchedules_CellClick(object sender, DataGridViewCellEventArgs e)
+        {
+            // Ensure user clicked a valid row
+            if (e.RowIndex >= 0 && e.ColumnIndex >= 0)
+            {
+                // Check if the clicked column is "Class Availability" (User clicks Available/Unavailable)
+                if (tblViewFlightSchedules.Columns[e.ColumnIndex].Name == "Class Availability")
+                {
+                    string flightNumber = tblViewFlightSchedules.Rows[e.RowIndex].Cells["Flight Number"].Value.ToString();
+                    string origin = tblViewFlightSchedules.Rows[e.RowIndex].Cells["Origin"].Value.ToString();
+                    string destination = tblViewFlightSchedules.Rows[e.RowIndex].Cells["Destination"].Value.ToString();
+
+                    // Call function to load details into Detailed View Panel
+                    LoadFlightDetails(flightNumber, origin, destination);
+
+                    // Hide other panels and show the detailed view panel
+                    panel1.Visible = false;
+                    panel2.Visible = false;
+                    panel3.Visible = false;
+                    panel4.Visible = false;
+                    panel5.Visible = false;
+                    panel6.Visible = false;
+                    panel7.Visible = false;
+                    panel8.Visible = false;
+                    panel9_DetailedFlightView.Visible = true;
+                }
+            }
+        }
+
+
+
+        private void ShowDetailedFlightViewPanel()
+        {
+            // Hide all panels
+            panel1.Visible = false;
+            panel2.Visible = false;
+            panel3.Visible = false;
+            panel4.Visible = false;
+            panel5.Visible = false;
+            panel6.Visible = false;
+            panel7.Visible = false;
+            panel8.Visible = false;
+            panel9_DetailedFlightView.Visible = true;
+
+            // Update navigation button images
+            navbtnBbook.Image = Image.FromFile("C:\\Users\\MSI\\source\\repos\\MERC\\MERC\\assets\\navbtnBook_Inactive.png");
+            navbtnAboutUs.Image = Image.FromFile("C:\\Users\\MSI\\source\\repos\\MERC\\MERC\\assets\\navbtnAboutUs_Inactive.png");
+            navbtnHomepage.Image = Image.FromFile("C:\\Users\\MSI\\source\\repos\\MERC\\MERC\\assets\\navbtnHomepage_Inactive.png");
+            navbtnFlighSchedule.Image = Image.FromFile("C:\\Users\\MSI\\source\\repos\\MERC\\MERC\\assets\\navbtnFlightSchedule_Active.png");
+            navbtnTransactions.Image = Image.FromFile("C:\\Users\\MSI\\source\\repos\\MERC\\MERC\\assets\\navbtnTransactions_Inactive.png");
+            navbtnViewBooking.Image = Image.FromFile("C:\\Users\\MSI\\source\\repos\\MERC\\MERC\\assets\\navbtnViewBooking_Inactive.png");
+        }
+
+        private void LoadFlightDetails(string flightNumber, string origin, string destination)
+        {
+            try
+            {
+                using (var connection = dbConnection.GetConnection())
+                {
+                    connection.Open();
+
+                    string query = @"
+        SELECT 
+            f.FlightNumber, f.BoardingTime, f.ArrivalTime, 
+            -- Fetch the actual capacity minus crew count
+            (SELECT MaxCapacity FROM AirplaneInformation WHERE Type = 'Private') AS PrivateCapacity,
+            (SELECT COUNT(*) FROM BookingInformation WHERE FlightCode = f.FlightCode AND ClassType = 'Private') + 
+            (SELECT CrewCount FROM AirplaneInformation WHERE Type = 'Private') AS PrivateBooked,
+            
+            (SELECT MaxCapacity FROM AirplaneInformation WHERE Type = 'Business') AS BusinessCapacity,
+            (SELECT COUNT(*) FROM BookingInformation WHERE FlightCode = f.FlightCode AND ClassType = 'Business') + 
+            (SELECT CrewCount FROM AirplaneInformation WHERE Type = 'Business') AS BusinessBooked,
+            
+            (SELECT MaxCapacity FROM AirplaneInformation WHERE Type = 'Regular') AS RegularCapacity,
+            (SELECT COUNT(*) FROM BookingInformation WHERE FlightCode = f.FlightCode AND ClassType = 'Regular') + 
+            (SELECT CrewCount FROM AirplaneInformation WHERE Type = 'Regular') AS RegularBooked,
+
+            -- Fetch class-specific baggage fees
+            (SELECT BaggageFee FROM FlightInformation WHERE FlightNumber = f.FlightNumber AND ClassType = 'Private') AS PrivateBaggageFee,
+            (SELECT BaggageFee FROM FlightInformation WHERE FlightNumber = f.FlightNumber AND ClassType = 'Business') AS BusinessBaggageFee,
+            (SELECT BaggageFee FROM FlightInformation WHERE FlightNumber = f.FlightNumber AND ClassType = 'Regular') AS RegularBaggageFee,
+
+            -- Fetch Insurance fees
+            (SELECT InsuranceFeePerPerson FROM InsuranceInformation WHERE ClassType = 'Private') AS PrivateInsurance,
+            (SELECT InsuranceFeePerPerson FROM InsuranceInformation WHERE ClassType = 'Business') AS BusinessInsurance,
+            (SELECT InsuranceFeePerPerson FROM InsuranceInformation WHERE ClassType = 'Regular') AS RegularInsurance,
+
+            -- Fetch Travel Taxes
+            (SELECT TravelTaxPerPerson FROM TravelTaxInformation WHERE ClassType = 'Private') AS PrivateTax,
+            (SELECT TravelTaxPerPerson FROM TravelTaxInformation WHERE ClassType = 'Business') AS BusinessTax,
+            (SELECT TravelTaxPerPerson FROM TravelTaxInformation WHERE ClassType = 'Regular') AS RegularTax
+
+        FROM FlightInformation f
+        WHERE f.FlightNumber = @FlightNumber AND f.Origin = @Origin AND f.Destination = @Destination";
+
+                    MySqlCommand command = new MySqlCommand(query, connection);
+                    command.Parameters.AddWithValue("@FlightNumber", flightNumber);
+                    command.Parameters.AddWithValue("@Origin", origin);
+                    command.Parameters.AddWithValue("@Destination", destination);
+
+                    using (var reader = command.ExecuteReader())
+                    {
+                        if (reader.Read())
+                        {
+                            // 🟢 Update Flight Number, Times
+                            lvlViewDetails_FlightNumber.Text = reader["FlightNumber"].ToString();
+                            lvlViewDetails_DepartureTime.Text = reader["BoardingTime"].ToString();
+                            lvlViewDetails_ArrivalTime.Text = reader["ArrivalTime"].ToString();
+
+                            // 🟢 Get Capacity & Booked Counts (Including Crew)
+                            int privateCapacity = Convert.ToInt32(reader["PrivateCapacity"]);
+                            int privateBooked = Convert.ToInt32(reader["PrivateBooked"]);
+                            int businessCapacity = Convert.ToInt32(reader["BusinessCapacity"]);
+                            int businessBooked = Convert.ToInt32(reader["BusinessBooked"]);
+                            int regularCapacity = Convert.ToInt32(reader["RegularCapacity"]);
+                            int regularBooked = Convert.ToInt32(reader["RegularBooked"]);
+
+                            lvlViewDetails_PrivateCapacity.Text = $"{privateBooked}/{privateCapacity}";
+                            lvlViewDetails_BusinessCapacity.Text = $"{businessBooked}/{businessCapacity}";
+                            lvlViewDetails_RegularCapacity.Text = $"{regularBooked}/{regularCapacity}";
+
+                            // 🟢 Update Availability Images
+                            string availableImagePath = "C:\\Users\\MSI\\source\\repos\\MERC\\MERC\\assets\\lblAvailable.png";
+                            string unavailableImagePath = "C:\\Users\\MSI\\source\\repos\\MERC\\MERC\\assets\\lblUnavailable.png";
+
+                            imgViewDetails_PrivateAvailability.Image = (privateBooked < privateCapacity)
+                                ? Image.FromFile(availableImagePath)
+                                : Image.FromFile(unavailableImagePath);
+                            imgViewDetails_Businessvailability.Image = (businessBooked < businessCapacity)
+                                ? Image.FromFile(availableImagePath)
+                                : Image.FromFile(unavailableImagePath);
+                            imgViewDetails_RegularAvailability.Image = (regularBooked < regularCapacity)
+                                ? Image.FromFile(availableImagePath)
+                                : Image.FromFile(unavailableImagePath);
+
+                            // 🟢 Update Fees (Fetched from DB)
+                            lblViewDetails_PrivateBaggageFee.Text = reader["PrivateBaggageFee"].ToString();
+                            lblViewDetails_BusinessBaggageFee.Text = reader["BusinessBaggageFee"].ToString();
+                            lblViewDetails_RegularBaggageFee.Text = reader["RegularBaggageFee"].ToString();
+
+                            lblViewDetails_PrivateInsurance.Text = reader["PrivateInsurance"].ToString();
+                            lblViewDetails_BusinessInsurance.Text = reader["BusinessInsurance"].ToString();
+                            lblViewDetails_RegularInsurance.Text = reader["RegularInsurance"].ToString();
+
+                            lblViewDetails_PrivateTax.Text = reader["PrivateTax"].ToString();
+                            lblViewDetails_BusinessTax.Text = reader["BusinessTax"].ToString();
+                            lblViewDetails_RegularTax.Text = reader["RegularTax"].ToString();
+                        }
+                        else
+                        {
+                            ShowError(5, "Flight details not found.");
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                ShowError(7, $"Database error while fetching flight details: {ex.Message}");
+            }
+        }
+
+
+
+
+
+
+        private int GetBookedCount(string flightNumber)
+        {
+            int bookedCount = 0;
+            try
+            {
+                using (var connection = dbConnection.GetConnection())
+                {
+                    connection.Open();
+                    string query = @"SELECT COUNT(*) FROM BookingInformation WHERE FlightCode = 
+                            (SELECT FlightCode FROM FlightInformation WHERE FlightNumber = @FlightNumber)";
+
+                    MySqlCommand command = new MySqlCommand(query, connection);
+                    command.Parameters.AddWithValue("@FlightNumber", flightNumber);
+
+                    bookedCount = Convert.ToInt32(command.ExecuteScalar());
+                }
+            }
+            catch (Exception ex)
+            {
+                ShowError(7, $"Database error fetching booked count: {ex.Message}");
+            }
+
+            return bookedCount;
+        }
+
+        private void UpdateClassAvailability(string classType, int maxCapacity, int bookedCount)
+        {
+            bool isAvailable = bookedCount < maxCapacity;
+            string availableImagePath = @"C:\Users\MSI\source\repos\MERC\MERC\assets\lblAvailable.png";
+            string unavailableImagePath = @"C:\Users\MSI\source\repos\MERC\MERC\assets\lblUnavailable.png";
+
+            switch (classType)
+            {
+                case "Private":
+                    imgViewDetails_PrivateAvailability.Image = Image.FromFile(isAvailable ? availableImagePath : unavailableImagePath);
+                    break;
+                case "Business":
+                    imgViewDetails_Businessvailability.Image = Image.FromFile(isAvailable ? availableImagePath : unavailableImagePath);
+                    break;
+                case "Regular":
+                    imgViewDetails_RegularAvailability.Image = Image.FromFile(isAvailable ? availableImagePath : unavailableImagePath);
+                    break;
+            }
+        }
+
+
+
+        private void UpdateBaggageFee(string classType, float baggageFee)
+        {
+            switch (classType)
+            {
+                case "Private":
+                    lblViewDetails_PrivateBaggageFee.Text = baggageFee.ToString("0.00");
+                    break;
+                case "Business":
+                    lblViewDetails_BusinessBaggageFee.Text = baggageFee.ToString("0.00");
+                    break;
+                case "Regular":
+                    lblViewDetails_RegularBaggageFee.Text = baggageFee.ToString("0.00");
+                    break;
+            }
+        }
+
+        private void UpdateInsuranceFee(string classType)
+        {
+            float insuranceFee = classType switch
+            {
+                "Private" => 4500.00f,
+                "Business" => 6500.00f,
+                "Regular" => 950.00f,
+                _ => 0.00f
+            };
+
+            switch (classType)
+            {
+                case "Private":
+                    lblViewDetails_PrivateInsurance.Text = insuranceFee.ToString("0.00");
+                    break;
+                case "Business":
+                    lblViewDetails_BusinessInsurance.Text = insuranceFee.ToString("0.00");
+                    break;
+                case "Regular":
+                    lblViewDetails_RegularInsurance.Text = insuranceFee.ToString("0.00");
+                    break;
+            }
+        }
+
+        private void UpdateTravelTax(string classType)
+        {
+            float travelTax = classType switch
+            {
+                "Private" => 4260.00f,
+                "Business" => 5700.00f,
+                "Regular" => 2500.00f,
+                _ => 0.00f
+            };
+
+            switch (classType)
+            {
+                case "Private":
+                    lblViewDetails_PrivateTax.Text = travelTax.ToString("0.00");
+                    break;
+                case "Business":
+                    lblViewDetails_BusinessTax.Text = travelTax.ToString("0.00");
+                    break;
+                case "Regular":
+                    lblViewDetails_RegularTax.Text = travelTax.ToString("0.00");
+                    break;
+            }
+        }
+
+        private void BookFlight(string classType)
+        {
+            string origin = "";
+            string destination = "";
+
+            // Fetch Origin & Destination from DB based on the Flight Number
+            try
+            {
+                using (var connection = dbConnection.GetConnection())
+                {
+                    connection.Open();
+
+                    string query = "SELECT Origin, Destination FROM FlightInformation WHERE FlightNumber = @FlightNumber";
+                    MySqlCommand command = new MySqlCommand(query, connection);
+                    command.Parameters.AddWithValue("@FlightNumber", lvlViewDetails_FlightNumber.Text);
+
+                    using (var reader = command.ExecuteReader())
+                    {
+                        if (reader.Read())
+                        {
+                            origin = reader["Origin"].ToString();
+                            destination = reader["Destination"].ToString();
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                ShowError(7, $"Database error fetching flight details: {ex.Message}");
+                return;
+            }
+
+            // Switch to Booking Panel
+            panel1.Visible = false;
+            panel2.Visible = false;
+            panel3.Visible = true; // Booking Panel
+            panel4.Visible = false;
+            panel5.Visible = false;
+            panel6.Visible = false;
+            panel7.Visible = false;
+            panel8.Visible = false;
+            panel9_DetailedFlightView.Visible = false;
+
+            // Update Navigation Icons
+            navbtnBbook.Image = Image.FromFile("C:\\Users\\MSI\\source\\repos\\MERC\\MERC\\assets\\navbtnBook_Active.png");
+            navbtnAboutUs.Image = Image.FromFile("C:\\Users\\MSI\\source\\repos\\MERC\\MERC\\assets\\navbtnAboutUs_Inactive.png");
+            navbtnHomepage.Image = Image.FromFile("C:\\Users\\MSI\\source\\repos\\MERC\\MERC\\assets\\navbtnHomepage_Inactive.png");
+            navbtnFlighSchedule.Image = Image.FromFile("C:\\Users\\MSI\\source\\repos\\MERC\\MERC\\assets\\navbtnFlightSchedule_Inactive.png");
+            navbtnTransactions.Image = Image.FromFile("C:\\Users\\MSI\\source\\repos\\MERC\\MERC\\assets\\navbtnTransactions_Inactive.png");
+            navbtnViewBooking.Image = Image.FromFile("C:\\Users\\MSI\\source\\repos\\MERC\\MERC\\assets\\navbtnViewBooking_Inactive.png");
+
+            // Load Origin & Destination into the booking panel
+            cbOrigin.SelectedItem = origin;
+            cbDestination.SelectedItem = destination;
+
+            // Select the correct Class Type radio button
+            foreach (RadioButton rb in grpClassType.Controls.OfType<RadioButton>())
+            {
+                if (rb.Text.Equals(classType, StringComparison.OrdinalIgnoreCase))
+                {
+                    rb.Checked = true;
+                    break;
+                }
+            }
+        }
+
+        // **Private Class Booking**
+        private void btnViewDetails_BookPrivate_Click(object sender, EventArgs e)
+        {
+            BookFlight("Private");
+        }
+
+        // **Business Class Booking**
+        private void btnViewDetails_BookBusiness_Click(object sender, EventArgs e)
+        {
+            BookFlight("Business");
+        }
+
+        // **Regular Class Booking**
+        private void btnViewDetails_BookRegular_Click(object sender, EventArgs e)
+        {
+            BookFlight("Regular");
+        }
+
+
+    } // END OF NAME SPACE
 }

@@ -135,7 +135,8 @@
         private void btnBook_Click(object sender, EventArgs e)
         {
             // Navigate to the Booking Wizard Panel
-            Homepage homepage = new Homepage(AccountID, Username, Email, PhoneNumber, FullName);
+            Homepage homepage = new Homepage(AccountID, Username, Email, PhoneNumber, FullName, ""); 
+
             homepage.Show();
             this.Hide();
 
@@ -150,7 +151,7 @@
         private void btnHomePage_Click(object sender, EventArgs e)
         {
             // Create an instance of the Homepage form
-            Homepage homepage = new Homepage(AccountID, Username, Email, PhoneNumber, FullName);
+            Homepage homepage = new Homepage(AccountID, Username, Email, PhoneNumber, FullName, "");
 
             // Show the Homepage form
             homepage.Show();
@@ -168,8 +169,8 @@
 
         private void btnViewPage_Click(object sender, EventArgs e)
         {
-            Homepage booking = new Homepage(AccountID, Username, Email, PhoneNumber, FullName);
-            booking.Show();
+            Homepage homepage = new Homepage(AccountID, Username, Email, PhoneNumber, FullName, "");
+            homepage.Show();
 
         }
 

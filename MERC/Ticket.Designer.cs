@@ -250,7 +250,7 @@
             // lblTicketID
             // 
             lblTicketID.BackColor = Color.Transparent;
-            lblTicketID.Font = new Font("Arial Narrow", 14.25F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            lblTicketID.Font = new Font("Arial Narrow", 14.25F, FontStyle.Bold, GraphicsUnit.Point, 0);
             lblTicketID.ForeColor = Color.Transparent;
             lblTicketID.Location = new Point(1059, 42);
             lblTicketID.Name = "lblTicketID";
@@ -336,9 +336,7 @@
             Controls.Add(lblDestination);
             Controls.Add(lblOrigin);
             Controls.Add(lblPassengerName);
-            FormBorderStyle = FormBorderStyle.None;
             Name = "Ticket";
-            StartPosition = FormStartPosition.CenterScreen;
             Text = "Ticket";
             ResumeLayout(false);
         }
