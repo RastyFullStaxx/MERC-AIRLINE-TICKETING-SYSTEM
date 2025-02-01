@@ -1614,15 +1614,15 @@
             Controls.Add(navbtnViewBooking);
             Controls.Add(navbtnBbook);
             Controls.Add(navbtnHomepage);
-            Controls.Add(panel9_DetailedFlightView);
-            Controls.Add(panel8);
-            Controls.Add(panel7);
             Controls.Add(panel5);
             Controls.Add(panel6);
             Controls.Add(panel4);
             Controls.Add(panel3);
             Controls.Add(panel2);
             Controls.Add(panel1);
+            Controls.Add(panel9_DetailedFlightView);
+            Controls.Add(panel8);
+            Controls.Add(panel7);
             FormBorderStyle = FormBorderStyle.None;
             Name = "Homepage";
             StartPosition = FormStartPosition.CenterScreen;

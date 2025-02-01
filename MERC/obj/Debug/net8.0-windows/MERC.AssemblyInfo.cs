@@ -14,7 +14,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("MERC")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+62e837ac109669d13fde17b00be3f1d03281ea19")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+6eb48b921df3e5d61a238ca83754a91f1c876d2f")]
 [assembly: System.Reflection.AssemblyProductAttribute("MERC")]
 [assembly: System.Reflection.AssemblyTitleAttribute("MERC")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

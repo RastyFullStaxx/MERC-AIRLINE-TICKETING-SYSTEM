@@ -52,6 +52,15 @@ namespace MERC
             LoadTransactions();
             tblViewFlightSchedules.CellFormatting += tblViewFlightSchedules_CellFormatting;
             tblViewFlightSchedules.CellClick += tblViewFlightSchedules_CellClick;
+            InitializeTransactionSearch();
+            InitializeTransactionSearch();
+            
+            cbTransaction_SearchBy.SelectedIndexChanged += cbTransaction_SearchBy_SelectedIndexChanged;
+            cbSearchBookings_Origin.SelectedIndexChanged += cbSearchBookings_Origin_SelectedIndexChanged;
+            cbSearchBookings_Destination.SelectedIndexChanged += cbSearchBookings_Destination_SelectedIndexChanged;
+            dtpSearchBookingsDate.ValueChanged += dtpSearchBookingsDate_ValueChanged;
+            txtTransactions_SearchBar.KeyDown += txtTransactions_SearchBar_KeyDown;
+
 
 
             // Assign the values to encapsulated properties
@@ -71,6 +80,11 @@ namespace MERC
             cbDestination.SelectedIndexChanged += cbDestination_SelectedIndexChanged;
             cbNumberofPassengers.SelectedIndexChanged += cbNumberofPassengers_SelectedIndexChanged;
             chkbTravelInsurance.CheckedChanged += chkbTravelInsurance_CheckedChanged;
+            // Attach event handlers for search elements
+            cbSearchSchedule_Origin.SelectedIndexChanged += cbSearchSchedule_Origin_SelectedIndexChanged;
+            cbSearchSchedule_Destination.SelectedIndexChanged += cbSearchSchedule_Destination_SelectedIndexChanged;
+            dtpSearchScheduleDate.ValueChanged += dtpSearchScheduleDate_ValueChanged;
+
 
             // Set pricing
             lblClassFare.Text = "0.00";
@@ -475,7 +489,7 @@ namespace MERC
 
         private void navbtnFlighSchedule_Click(object sender, EventArgs e)
         {
-            LoadFlightSchedules();
+            
             panel1.Visible = false;
             panel2.Visible = false;
             panel3.Visible = false;
@@ -493,6 +507,9 @@ namespace MERC
             navbtnTransactions.Image = Image.FromFile("C:\\Users\\MSI\\source\\repos\\MERC\\MERC\\assets\\navbtnTransactions_Inactive.png");
             navbtnAboutUs.Image = Image.FromFile("C:\\Users\\MSI\\source\\repos\\MERC\\MERC\\assets\\navbtnAboutUs_Inactive.png");
             navbtnViewBooking.Image = Image.FromFile("C:\\Users\\MSI\\source\\repos\\MERC\\MERC\\assets\\navbtnViewBooking_Inactive.png");
+            LoadFlightSchedules();
+            InitializeScheduleSearch();
+                
         }
 
         private void navbtnViewBooking_Click(object sender, EventArgs e)
@@ -518,6 +535,7 @@ namespace MERC
             navbtnViewBooking.Image = Image.FromFile("C:\\Users\\MSI\\source\\repos\\MERC\\MERC\\assets\\navbtnViewBooking_Active.png");
 
             LoadActiveBookings();
+            InitializeBookingSearch();
         }
 
         private void navbtnTransactions_Click(object sender, EventArgs e)
@@ -1405,26 +1423,27 @@ namespace MERC
                 {
                     connection.Open();
                     string query = @"
-        SELECT 
-            f.FlightNumber AS 'Flight Number',
-            f.Origin AS 'Origin',
-            f.Destination AS 'Destination',
-            f.ClassType AS 'Class Type',
-            f.BoardingDate AS 'Departure Date',
-            f.ArrivalDate AS 'Arrival Date',
-            f.BoardingTime AS 'Departure Time',
-            f.ArrivalTime AS 'Arrival Time',
-            CASE 
-                WHEN (a.MaxCapacity - COALESCE((SELECT SUM(b.NumberOfPassengers) 
-                                               FROM BookingInformation b 
-                                               WHERE b.FlightCode = f.FlightCode 
-                                               AND b.ClassType = f.ClassType), 0)) > 0 
-                THEN 'Available' ELSE 'Unavailable' 
-            END AS 'Class Availability'
-        FROM FlightInformation f
-        JOIN AirplaneInformation a ON f.ClassType = a.Type
-        GROUP BY f.FlightNumber, f.Origin, f.Destination, f.ClassType, 
-                 f.BoardingDate, f.ArrivalDate, f.BoardingTime, f.ArrivalTime, a.MaxCapacity";
+SELECT 
+    f.FlightNumber AS 'Flight Number',
+    f.Origin AS 'Origin',
+    f.Destination AS 'Destination',
+    f.ClassType AS 'Class Type',
+    f.BoardingDate AS 'Departure Date',
+    f.ArrivalDate AS 'Arrival Date',
+    f.BoardingTime AS 'Departure Time',
+    f.ArrivalTime AS 'Arrival Time',
+    CASE 
+        WHEN (a.MaxCapacity - a.CrewCount - COALESCE((SELECT SUM(b.NumberOfPassengers) 
+                                                     FROM BookingInformation b 
+                                                     WHERE b.FlightCode = f.FlightCode 
+                                                     AND b.ClassType = f.ClassType), 0)) > 0 
+        THEN 'Available' 
+        ELSE 'Unavailable' 
+    END AS 'Class Availability'
+FROM FlightInformation f
+JOIN AirplaneInformation a ON f.ClassType = a.Type
+GROUP BY f.FlightNumber, f.Origin, f.Destination, f.ClassType, 
+         f.BoardingDate, f.ArrivalDate, f.BoardingTime, f.ArrivalTime, a.MaxCapacity, a.CrewCount";
 
                     MySqlCommand command = new MySqlCommand(query, connection);
                     MySqlDataAdapter adapter = new MySqlDataAdapter(command);
@@ -1433,7 +1452,7 @@ namespace MERC
 
                     tblViewFlightSchedules.DataSource = dataTable;
 
-                    // ✅ Set proper column headers for UI clarity
+                    // ✅ Set proper column headers
                     tblViewFlightSchedules.Columns["Flight Number"].HeaderText = "Flight No.";
                     tblViewFlightSchedules.Columns["Origin"].HeaderText = "Origin";
                     tblViewFlightSchedules.Columns["Destination"].HeaderText = "Destination";
@@ -1444,12 +1463,12 @@ namespace MERC
                     tblViewFlightSchedules.Columns["Arrival Time"].HeaderText = "Arrival Time";
                     tblViewFlightSchedules.Columns["Class Availability"].HeaderText = "Availability";
 
-                    // ✅ Format colors dynamically with null handling
+                    // ✅ Format colors dynamically (fix null errors)
                     foreach (DataGridViewRow row in tblViewFlightSchedules.Rows)
                     {
                         if (row.Cells["Class Availability"].Value != null && !string.IsNullOrEmpty(row.Cells["Class Availability"].Value.ToString()))
                         {
-                            string availability = row.Cells["Class Availability"].Value.ToString(); // ✅ Fix: Use correct column alias
+                            string availability = row.Cells["Class Availability"].Value.ToString();
                             if (availability == "Available")
                             {
                                 row.Cells["Class Availability"].Style.ForeColor = Color.Green;
@@ -1463,7 +1482,6 @@ namespace MERC
                         }
                     }
 
-
                     // ✅ Resize columns for better fit
                     tblViewFlightSchedules.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
                     tblViewFlightSchedules.AutoSizeRowsMode = DataGridViewAutoSizeRowsMode.AllCells;
@@ -1475,6 +1493,7 @@ namespace MERC
                 ShowError(7, $"Database error while fetching flight schedules: {ex.Message}");
             }
         }
+
 
 
 
@@ -1586,38 +1605,40 @@ namespace MERC
                     connection.Open();
 
                     string query = @"
-        SELECT 
-            f.FlightNumber, f.BoardingTime, f.ArrivalTime, 
-            -- Fetch the actual capacity minus crew count
-            (SELECT MaxCapacity FROM AirplaneInformation WHERE Type = 'Private') AS PrivateCapacity,
-            (SELECT COUNT(*) FROM BookingInformation WHERE FlightCode = f.FlightCode AND ClassType = 'Private') + 
-            (SELECT CrewCount FROM AirplaneInformation WHERE Type = 'Private') AS PrivateBooked,
-            
-            (SELECT MaxCapacity FROM AirplaneInformation WHERE Type = 'Business') AS BusinessCapacity,
-            (SELECT COUNT(*) FROM BookingInformation WHERE FlightCode = f.FlightCode AND ClassType = 'Business') + 
-            (SELECT CrewCount FROM AirplaneInformation WHERE Type = 'Business') AS BusinessBooked,
-            
-            (SELECT MaxCapacity FROM AirplaneInformation WHERE Type = 'Regular') AS RegularCapacity,
-            (SELECT COUNT(*) FROM BookingInformation WHERE FlightCode = f.FlightCode AND ClassType = 'Regular') + 
-            (SELECT CrewCount FROM AirplaneInformation WHERE Type = 'Regular') AS RegularBooked,
+                    SELECT 
+                        f.FlightNumber, f.BoardingTime, f.ArrivalTime, 
 
-            -- Fetch class-specific baggage fees
-            (SELECT BaggageFee FROM FlightInformation WHERE FlightNumber = f.FlightNumber AND ClassType = 'Private') AS PrivateBaggageFee,
-            (SELECT BaggageFee FROM FlightInformation WHERE FlightNumber = f.FlightNumber AND ClassType = 'Business') AS BusinessBaggageFee,
-            (SELECT BaggageFee FROM FlightInformation WHERE FlightNumber = f.FlightNumber AND ClassType = 'Regular') AS RegularBaggageFee,
+                        -- Fetch actual capacity minus crew count
+                        (SELECT MaxCapacity FROM AirplaneInformation WHERE Type = 'Private' LIMIT 1) AS PrivateCapacity,
+                        (COALESCE((SELECT SUM(b.NumberOfPassengers) FROM BookingInformation b 
+                                   WHERE b.FlightCode = f.FlightCode AND b.ClassType = 'Private'), 0) 
+                         + (SELECT CrewCount FROM AirplaneInformation WHERE Type = 'Private' LIMIT 1)) AS PrivateBooked,
 
-            -- Fetch Insurance fees
-            (SELECT InsuranceFeePerPerson FROM InsuranceInformation WHERE ClassType = 'Private') AS PrivateInsurance,
-            (SELECT InsuranceFeePerPerson FROM InsuranceInformation WHERE ClassType = 'Business') AS BusinessInsurance,
-            (SELECT InsuranceFeePerPerson FROM InsuranceInformation WHERE ClassType = 'Regular') AS RegularInsurance,
+                        (SELECT MaxCapacity FROM AirplaneInformation WHERE Type = 'Business' LIMIT 1) AS BusinessCapacity,
+                        (COALESCE((SELECT SUM(b.NumberOfPassengers) FROM BookingInformation b 
+                                   WHERE b.FlightCode = f.FlightCode AND b.ClassType = 'Business'), 0) 
+                         + (SELECT CrewCount FROM AirplaneInformation WHERE Type = 'Business' LIMIT 1)) AS BusinessBooked,
 
-            -- Fetch Travel Taxes
-            (SELECT TravelTaxPerPerson FROM TravelTaxInformation WHERE ClassType = 'Private') AS PrivateTax,
-            (SELECT TravelTaxPerPerson FROM TravelTaxInformation WHERE ClassType = 'Business') AS BusinessTax,
-            (SELECT TravelTaxPerPerson FROM TravelTaxInformation WHERE ClassType = 'Regular') AS RegularTax
+                        (SELECT MaxCapacity FROM AirplaneInformation WHERE Type = 'Regular' LIMIT 1) AS RegularCapacity,
+                        (COALESCE((SELECT SUM(b.NumberOfPassengers) FROM BookingInformation b 
+                                   WHERE b.FlightCode = f.FlightCode AND b.ClassType = 'Regular'), 0) 
+                         + (SELECT CrewCount FROM AirplaneInformation WHERE Type = 'Regular' LIMIT 1)) AS RegularBooked,
 
-        FROM FlightInformation f
-        WHERE f.FlightNumber = @FlightNumber AND f.Origin = @Origin AND f.Destination = @Destination";
+                        -- Fetch Insurance fees
+                        (SELECT InsuranceFeePerPerson FROM InsuranceInformation WHERE ClassType = 'Private' LIMIT 1) AS PrivateInsurance,
+                        (SELECT InsuranceFeePerPerson FROM InsuranceInformation WHERE ClassType = 'Business' LIMIT 1) AS BusinessInsurance,
+                        (SELECT InsuranceFeePerPerson FROM InsuranceInformation WHERE ClassType = 'Regular' LIMIT 1) AS RegularInsurance,
+
+                        -- Fetch Travel Taxes
+                        (SELECT TravelTaxPerPerson FROM TravelTaxInformation WHERE ClassType = 'Private' LIMIT 1) AS PrivateTax,
+                        (SELECT TravelTaxPerPerson FROM TravelTaxInformation WHERE ClassType = 'Business' LIMIT 1) AS BusinessTax,
+                        (SELECT TravelTaxPerPerson FROM TravelTaxInformation WHERE ClassType = 'Regular' LIMIT 1) AS RegularTax
+
+                    FROM FlightInformation f
+                    WHERE f.FlightNumber = @FlightNumber 
+                    AND f.Origin = @Origin 
+                    AND f.Destination = @Destination
+                    LIMIT 1"; 
 
                     MySqlCommand command = new MySqlCommand(query, connection);
                     command.Parameters.AddWithValue("@FlightNumber", flightNumber);
@@ -1659,11 +1680,12 @@ namespace MERC
                                 ? Image.FromFile(availableImagePath)
                                 : Image.FromFile(unavailableImagePath);
 
-                            // 🟢 Update Fees (Fetched from DB)
-                            lblViewDetails_PrivateBaggageFee.Text = reader["PrivateBaggageFee"].ToString();
-                            lblViewDetails_BusinessBaggageFee.Text = reader["BusinessBaggageFee"].ToString();
-                            lblViewDetails_RegularBaggageFee.Text = reader["RegularBaggageFee"].ToString();
+                            // 🟢 **Fixed Baggage Fees (No Need to Fetch from DB)**
+                            lblViewDetails_PrivateBaggageFee.Text = "1250.00";
+                            lblViewDetails_BusinessBaggageFee.Text = "2850.00";
+                            lblViewDetails_RegularBaggageFee.Text = "950.00";
 
+                            // 🟢 Update Insurance Fees (Fetched from DB)
                             lblViewDetails_PrivateInsurance.Text = reader["PrivateInsurance"].ToString();
                             lblViewDetails_BusinessInsurance.Text = reader["BusinessInsurance"].ToString();
                             lblViewDetails_RegularInsurance.Text = reader["RegularInsurance"].ToString();
@@ -1684,6 +1706,12 @@ namespace MERC
                 ShowError(7, $"Database error while fetching flight details: {ex.Message}");
             }
         }
+
+
+
+
+
+
 
 
 
@@ -1801,12 +1829,36 @@ namespace MERC
             }
         }
 
-        private void BookFlight(string classType)
+        private void BookFlight(string classType, Label capacityLabel)
         {
+            // Extract the booked and max capacity from the label
+            string[] capacityParts = capacityLabel.Text.Split('/');
+            int bookedSeats = int.Parse(capacityParts[0].Trim());
+            int maxSeats = int.Parse(capacityParts[1].Trim());
+
+            // ✅ Prevent transition if the flight is full
+            if (bookedSeats >= maxSeats)
+            {
+                ShowError(4, $"Booking unavailable: {classType} Class is already full.");
+
+                // 🔴 Stay on the Detailed Flight View Panel
+                panel1.Visible = false;
+                panel2.Visible = false;
+                panel3.Visible = false; // ❌ Prevents Booking Panel from being shown
+                panel4.Visible = false;
+                panel5.Visible = false;
+                panel6.Visible = false;
+                panel7.Visible = false;
+                panel8.Visible = false;
+                panel9_DetailedFlightView.Visible = true; // ✅ Stay on detailed view panel
+
+                return; // 🔴 Exit function to block navigation
+            }
+
             string origin = "";
             string destination = "";
 
-            // Fetch Origin & Destination from DB based on the Flight Number
+            // ✅ Fetch Origin & Destination from DB based on the Flight Number
             try
             {
                 using (var connection = dbConnection.GetConnection())
@@ -1833,10 +1885,10 @@ namespace MERC
                 return;
             }
 
-            // Switch to Booking Panel
+            // ✅ Proceed to Booking Panel ONLY if available
             panel1.Visible = false;
             panel2.Visible = false;
-            panel3.Visible = true; // Booking Panel
+            panel3.Visible = true; // ✅ Opens only if available
             panel4.Visible = false;
             panel5.Visible = false;
             panel6.Visible = false;
@@ -1844,7 +1896,7 @@ namespace MERC
             panel8.Visible = false;
             panel9_DetailedFlightView.Visible = false;
 
-            // Update Navigation Icons
+            // ✅ Update Navigation Icons
             navbtnBbook.Image = Image.FromFile("C:\\Users\\MSI\\source\\repos\\MERC\\MERC\\assets\\navbtnBook_Active.png");
             navbtnAboutUs.Image = Image.FromFile("C:\\Users\\MSI\\source\\repos\\MERC\\MERC\\assets\\navbtnAboutUs_Inactive.png");
             navbtnHomepage.Image = Image.FromFile("C:\\Users\\MSI\\source\\repos\\MERC\\MERC\\assets\\navbtnHomepage_Inactive.png");
@@ -1852,11 +1904,11 @@ namespace MERC
             navbtnTransactions.Image = Image.FromFile("C:\\Users\\MSI\\source\\repos\\MERC\\MERC\\assets\\navbtnTransactions_Inactive.png");
             navbtnViewBooking.Image = Image.FromFile("C:\\Users\\MSI\\source\\repos\\MERC\\MERC\\assets\\navbtnViewBooking_Inactive.png");
 
-            // Load Origin & Destination into the booking panel
+            // ✅ Load Origin & Destination into the booking panel
             cbOrigin.SelectedItem = origin;
             cbDestination.SelectedItem = destination;
 
-            // Select the correct Class Type radio button
+            // ✅ Select the correct Class Type radio button
             foreach (RadioButton rb in grpClassType.Controls.OfType<RadioButton>())
             {
                 if (rb.Text.Equals(classType, StringComparison.OrdinalIgnoreCase))
@@ -1867,23 +1919,469 @@ namespace MERC
             }
         }
 
-        // **Private Class Booking**
+        // **🟢 Private Class Booking**
         private void btnViewDetails_BookPrivate_Click(object sender, EventArgs e)
         {
-            BookFlight("Private");
+            BookFlight("Private", lvlViewDetails_PrivateCapacity);
         }
 
-        // **Business Class Booking**
+        // **🟢 Business Class Booking**
         private void btnViewDetails_BookBusiness_Click(object sender, EventArgs e)
         {
-            BookFlight("Business");
+            BookFlight("Business", lvlViewDetails_BusinessCapacity);
         }
 
-        // **Regular Class Booking**
+        // **🟢 Regular Class Booking**
         private void btnViewDetails_BookRegular_Click(object sender, EventArgs e)
         {
-            BookFlight("Regular");
+            BookFlight("Regular", lvlViewDetails_RegularCapacity);
         }
+
+
+        // 🔹 Initialize Transaction Search Filters with Placeholders
+        // 🔹 Initialize Transaction Search Filters with Placeholders
+        private void InitializeTransactionSearch()
+        {
+            // 🔹 Clear existing items
+            cbTransaction_SearchBy.Items.Clear();
+
+            // 🔹 Add Placeholder
+            cbTransaction_SearchBy.Items.Add("-- Select Search Field --");
+            cbTransaction_SearchBy.SelectedIndex = 0;
+            cbTransaction_SearchBy.ForeColor = Color.Gray;
+
+            // 🔹 Set Placeholder Text for Search Box
+            txtTransactions_SearchBar.Text = "Enter search term...";
+            txtTransactions_SearchBar.ForeColor = Color.Gray;
+
+            // 🔹 Attach Focus Events to Clear/Restore Placeholder
+            txtTransactions_SearchBar.GotFocus += TxtTransactions_SearchBar_GotFocus;
+            txtTransactions_SearchBar.LostFocus += TxtTransactions_SearchBar_LostFocus;
+
+            // 🔹 Populate Search Fields Dynamically from DataTable
+            LoadTransactionSearchFields();
+        }
+
+        // 🔹 Fetch Available Columns Dynamically
+        private void LoadTransactionSearchFields()
+        {
+            if (tblViewTransactions.DataSource is DataTable dt)
+            {
+                foreach (DataColumn col in dt.Columns)
+                {
+                    cbTransaction_SearchBy.Items.Add(col.ColumnName);
+                }
+            }
+        }
+
+        // 🔹 Clears Placeholder When Clicking Textbox
+        private void TxtTransactions_SearchBar_GotFocus(object sender, EventArgs e)
+        {
+            if (txtTransactions_SearchBar.Text == "Enter search term...")
+            {
+                txtTransactions_SearchBar.Text = "";
+                txtTransactions_SearchBar.ForeColor = Color.Black;
+            }
+        }
+
+        // 🔹 Restores Placeholder When Leaving Empty
+        private void TxtTransactions_SearchBar_LostFocus(object sender, EventArgs e)
+        {
+            if (string.IsNullOrWhiteSpace(txtTransactions_SearchBar.Text))
+            {
+                txtTransactions_SearchBar.Text = "Enter search term...";
+                txtTransactions_SearchBar.ForeColor = Color.Gray;
+            }
+        }
+
+        // 🔹 Handle Combo Box Selection Change
+        private void cbTransaction_SearchBy_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            if (cbTransaction_SearchBy.SelectedIndex > 0)
+            {
+                cbTransaction_SearchBy.ForeColor = Color.Black; // Normal text
+            }
+            else
+            {
+                cbTransaction_SearchBy.ForeColor = Color.Gray; // Placeholder text
+            }
+
+            // Reset search bar when changing search criteria
+            txtTransactions_SearchBar.Text = "Enter search term...";
+            txtTransactions_SearchBar.ForeColor = Color.Gray;
+        }
+
+        // 🔹 Executes the search **only** when Enter is pressed
+        private void txtTransactions_SearchBar_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.KeyCode == Keys.Enter) // ✅ Only trigger search when Enter is pressed
+            {
+                ApplyTransactionSearchFilter();
+                e.SuppressKeyPress = true; // ✅ Prevents the "ding" sound on Enter
+            }
+        }
+
+        // 🔹 Filtering Logic
+        private void ApplyTransactionSearchFilter()
+        {
+            if (tblViewTransactions.DataSource is DataTable dt)
+            {
+                // 🔹 Ensure a valid selection
+                if (cbTransaction_SearchBy.SelectedIndex <= 0 || cbTransaction_SearchBy.SelectedItem == null)
+                {
+                    ShowError(6, "Please select a valid search field before searching.");
+                    dt.DefaultView.RowFilter = ""; // Reset filter
+                    return;
+                }
+
+                string selectedColumn = cbTransaction_SearchBy.SelectedItem.ToString();
+                string searchTerm = txtTransactions_SearchBar.Text.Trim();
+
+                // 🔹 Verify if the selected column actually exists in the DataTable
+                if (!dt.Columns.Contains(selectedColumn))
+                {
+                    ShowError(6, "Invalid column selection. Please try again.");
+                    dt.DefaultView.RowFilter = ""; // Reset filter
+                    return;
+                }
+
+                if (string.IsNullOrEmpty(searchTerm) || searchTerm == "Enter search term...")
+                {
+                    dt.DefaultView.RowFilter = ""; // Show all rows if search is empty
+                }
+                else
+                {
+                    try
+                    {
+                        // 🔹 Ensure correct column filtering
+                        dt.DefaultView.RowFilter = $"[{selectedColumn}] LIKE '%{searchTerm}%'";
+                    }
+                    catch (Exception ex)
+                    {
+                        ShowError(7, $"Error applying filter: {ex.Message}");
+                    }
+                }
+            }
+        }
+
+
+
+
+
+
+
+        // 🔹 Track user interaction for combo boxes
+        private bool originSelected = false;
+        private bool destinationSelected = false;
+
+        // 🔹 Initialize Booking Search Filters
+        private void InitializeBookingSearch()
+        {
+            // 🔹 Clear existing items
+            cbSearchBookings_Origin.Items.Clear();
+            cbSearchBookings_Destination.Items.Clear();
+
+            // 🔹 Add Placeholder Items
+            cbSearchBookings_Origin.Items.Add("-- Select Origin --");
+            cbSearchBookings_Origin.SelectedIndex = 0;
+            cbSearchBookings_Origin.ForeColor = Color.Gray;
+
+            cbSearchBookings_Destination.Items.Add("-- Select Destination --");
+            cbSearchBookings_Destination.SelectedIndex = 0;
+            cbSearchBookings_Destination.ForeColor = Color.Gray;
+
+            // 🔹 Reset Tracking Flags
+            originSelected = false;
+            destinationSelected = false;
+
+            // 🔹 Load unique Origins and Destinations for the logged-in user
+            try
+            {
+                using (var connection = dbConnection.GetConnection())
+                {
+                    connection.Open();
+                    string query = @"
+            SELECT DISTINCT b.Origin, b.Destination
+            FROM BookingInformation b
+            WHERE b.AccountID = @AccountID";
+
+                    MySqlCommand command = new MySqlCommand(query, connection);
+                    command.Parameters.AddWithValue("@AccountID", this.AccountID);
+
+                    using (var reader = command.ExecuteReader())
+                    {
+                        while (reader.Read())
+                        {
+                            string origin = reader["Origin"].ToString();
+                            string destination = reader["Destination"].ToString();
+
+                            if (!cbSearchBookings_Origin.Items.Contains(origin))
+                                cbSearchBookings_Origin.Items.Add(origin);
+
+                            if (!cbSearchBookings_Destination.Items.Contains(destination))
+                                cbSearchBookings_Destination.Items.Add(destination);
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                ShowError(7, $"Database error while fetching filter values: {ex.Message}");
+            }
+
+            // 🔹 Set Default Date
+            dtpSearchBookingsDate.Value = DateTime.Today;
+        }
+
+        // 🔹 Handles Origin ComboBox Selection
+        private void cbSearchBookings_Origin_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            cbSearchBookings_Origin.ForeColor = cbSearchBookings_Origin.SelectedIndex > 0 ? Color.Black : Color.Gray;
+
+            // Mark Origin as Selected
+            if (cbSearchBookings_Origin.SelectedIndex > 0)
+                originSelected = true;
+
+            // Trigger search **only if both origin & destination are selected**
+            if (originSelected && destinationSelected)
+                FilterBookings();
+        }
+
+        // 🔹 Handles Destination ComboBox Selection
+        private void cbSearchBookings_Destination_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            cbSearchBookings_Destination.ForeColor = cbSearchBookings_Destination.SelectedIndex > 0 ? Color.Black : Color.Gray;
+
+            // Mark Destination as Selected
+            if (cbSearchBookings_Destination.SelectedIndex > 0)
+                destinationSelected = true;
+
+            // Trigger search **only if both origin & destination are selected**
+            if (originSelected && destinationSelected)
+                FilterBookings();
+        }
+
+        // 🔹 Handles Date Picker Selection (Remains Optional)
+        private void dtpSearchBookingsDate_ValueChanged(object sender, EventArgs e)
+        {
+            // Only filter if both origin & destination have been selected
+            if (originSelected && destinationSelected)
+                FilterBookings();
+        }
+
+        // 🔹 Filtering Function for Booking Search
+        private void FilterBookings()
+        {
+            try
+            {
+                using (var connection = dbConnection.GetConnection())
+                {
+                    connection.Open();
+
+                    // ✅ Base Query (Ensures we get data linked to the current user)
+                    string query = @"
+            SELECT b.FlightCode, b.Origin, b.Destination, f.BoardingDate, b.BookingDate
+            FROM BookingInformation b
+            JOIN FlightInformation f ON b.FlightCode = f.FlightCode
+            WHERE b.AccountID = @AccountID";
+
+                    // ✅ Add filters dynamically
+                    if (cbSearchBookings_Origin.SelectedIndex > 0)
+                        query += " AND b.Origin = @Origin";
+
+                    if (cbSearchBookings_Destination.SelectedIndex > 0)
+                        query += " AND b.Destination = @Destination";
+
+                    // ✅ Only apply the date filter **if the user has modified it**
+                    if (dtpSearchBookingsDate.Value != DateTime.Today)
+                        query += " AND DATE(f.BoardingDate) = @BoardingDate";
+
+                    MySqlCommand command = new MySqlCommand(query, connection);
+                    command.Parameters.AddWithValue("@AccountID", this.AccountID);
+
+                    if (cbSearchBookings_Origin.SelectedIndex > 0)
+                        command.Parameters.AddWithValue("@Origin", cbSearchBookings_Origin.SelectedItem.ToString());
+
+                    if (cbSearchBookings_Destination.SelectedIndex > 0)
+                        command.Parameters.AddWithValue("@Destination", cbSearchBookings_Destination.SelectedItem.ToString());
+
+                    if (dtpSearchBookingsDate.Value != DateTime.Today)
+                        command.Parameters.AddWithValue("@BoardingDate", dtpSearchBookingsDate.Value.Date);
+
+                    // ✅ Execute Query
+                    MySqlDataAdapter adapter = new MySqlDataAdapter(command);
+                    DataTable dt = new DataTable();
+                    adapter.Fill(dt);
+
+                    // ✅ Debugging
+                    Console.WriteLine($"Filtered results count: {dt.Rows.Count}");
+
+                    if (dt.Rows.Count == 0)
+                    {
+                        ShowError(6, "No bookings found matching the selected criteria.");
+                    }
+
+                    tblViewBookings.DataSource = dt;
+                }
+            }
+            catch (Exception ex)
+            {
+                ShowError(7, $"Database error while filtering bookings: {ex.Message}");
+            }
+        }
+
+        // 🔹 Track user interaction for combo boxes
+        private bool scheduleOriginSelected = false;
+        private bool scheduleDestinationSelected = false;
+
+        // 🔹 Initialize Flight Schedule Search Filters
+        private void InitializeScheduleSearch()
+        {
+            // 🔹 Clear existing items
+            cbSearchSchedule_Origin.Items.Clear();
+            cbSearchSchedule_Destination.Items.Clear();
+
+            // 🔹 Add Placeholder Items
+            cbSearchSchedule_Origin.Items.Add("-- Select Origin --");
+            cbSearchSchedule_Origin.SelectedIndex = 0;
+            cbSearchSchedule_Origin.ForeColor = Color.Gray;
+
+            cbSearchSchedule_Destination.Items.Add("-- Select Destination --");
+            cbSearchSchedule_Destination.SelectedIndex = 0;
+            cbSearchSchedule_Destination.ForeColor = Color.Gray;
+
+            // 🔹 Reset Tracking Flags
+            scheduleOriginSelected = false;
+            scheduleDestinationSelected = false;
+
+            // 🔹 Load unique Origins and Destinations from Flight Information
+            try
+            {
+                using (var connection = dbConnection.GetConnection())
+                {
+                    connection.Open();
+                    string query = "SELECT DISTINCT Origin, Destination FROM FlightInformation";
+
+                    MySqlCommand command = new MySqlCommand(query, connection);
+                    using (var reader = command.ExecuteReader())
+                    {
+                        while (reader.Read())
+                        {
+                            string origin = reader["Origin"].ToString();
+                            string destination = reader["Destination"].ToString();
+
+                            if (!cbSearchSchedule_Origin.Items.Contains(origin))
+                                cbSearchSchedule_Origin.Items.Add(origin);
+
+                            if (!cbSearchSchedule_Destination.Items.Contains(destination))
+                                cbSearchSchedule_Destination.Items.Add(destination);
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                ShowError(7, $"Database error while fetching flight schedule filter values: {ex.Message}");
+            }
+
+            // 🔹 Set Default Date
+            dtpSearchScheduleDate.Value = DateTime.Today;
+        }
+
+        // 🔹 Handles Origin ComboBox Selection
+        private void cbSearchSchedule_Origin_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            cbSearchSchedule_Origin.ForeColor = cbSearchSchedule_Origin.SelectedIndex > 0 ? Color.Black : Color.Gray;
+
+            // ✅ Mark Origin as Selected
+            scheduleOriginSelected = cbSearchSchedule_Origin.SelectedIndex > 0;
+
+            // ✅ If both Origin & Destination have valid selections, trigger filtering
+            if (scheduleOriginSelected && scheduleDestinationSelected)
+                FilterFlightSchedules();
+        }
+
+        // 🔹 Handles Destination ComboBox Selection
+        private void cbSearchSchedule_Destination_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            cbSearchSchedule_Destination.ForeColor = cbSearchSchedule_Destination.SelectedIndex > 0 ? Color.Black : Color.Gray;
+
+            // ✅ Mark Destination as Selected
+            scheduleDestinationSelected = cbSearchSchedule_Destination.SelectedIndex > 0;
+
+            // ✅ If both Origin & Destination have valid selections, trigger filtering
+            if (scheduleOriginSelected && scheduleDestinationSelected)
+                FilterFlightSchedules();
+        }
+
+        // 🔹 Handles Date Picker Selection (Optional)
+        private void dtpSearchScheduleDate_ValueChanged(object sender, EventArgs e)
+        {
+            // ✅ Only apply date filter if Origin & Destination have been selected
+            if (scheduleOriginSelected && scheduleDestinationSelected)
+                FilterFlightSchedules();
+        }
+
+        // 🔹 Filtering Function for Flight Schedules
+        private void FilterFlightSchedules()
+        {
+            try
+            {
+                using (var connection = dbConnection.GetConnection())
+                {
+                    connection.Open();
+
+                    // ✅ Base Query (Ensures we retrieve schedule data)
+                    string query = @"
+            SELECT FlightNumber, Origin, Destination, BoardingDate, BoardingTime, ArrivalDate, ArrivalTime
+            FROM FlightInformation
+            WHERE 1=1"; // Allows dynamic filters
+
+                    // ✅ Add filters dynamically
+                    if (cbSearchSchedule_Origin.SelectedIndex > 0)
+                        query += " AND Origin = @Origin";
+
+                    if (cbSearchSchedule_Destination.SelectedIndex > 0)
+                        query += " AND Destination = @Destination";
+
+                    // ✅ Only apply the date filter **if the user has modified it**
+                    if (dtpSearchScheduleDate.Value != DateTime.Today)
+                        query += " AND DATE(BoardingDate) = @BoardingDate";
+
+                    MySqlCommand command = new MySqlCommand(query, connection);
+
+                    if (cbSearchSchedule_Origin.SelectedIndex > 0)
+                        command.Parameters.AddWithValue("@Origin", cbSearchSchedule_Origin.SelectedItem.ToString());
+
+                    if (cbSearchSchedule_Destination.SelectedIndex > 0)
+                        command.Parameters.AddWithValue("@Destination", cbSearchSchedule_Destination.SelectedItem.ToString());
+
+                    if (dtpSearchScheduleDate.Value != DateTime.Today)
+                        command.Parameters.AddWithValue("@BoardingDate", dtpSearchScheduleDate.Value.Date);
+
+                    // ✅ Execute Query
+                    MySqlDataAdapter adapter = new MySqlDataAdapter(command);
+                    DataTable dt = new DataTable();
+                    adapter.Fill(dt);
+
+                    // ✅ Debugging
+                    Console.WriteLine($"Filtered schedule results count: {dt.Rows.Count}");
+
+                    if (dt.Rows.Count == 0)
+                    {
+                        ShowError(6, "No flights found matching the selected criteria.");
+                    }
+
+                    tblViewFlightSchedules.DataSource = dt;
+                }
+            }
+            catch (Exception ex)
+            {
+                ShowError(7, $"Database error while filtering flight schedules: {ex.Message}");
+            }
+        }
+
+
 
 
     } // END OF NAME SPACE
